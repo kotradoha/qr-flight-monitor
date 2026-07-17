@@ -1,6 +1,12 @@
 name: Update flight data
 
 on:
+  # 코드 변경 시 즉시 1회 실행(스케줄 크론이 지연·누락돼도 최소한 배포 때마다 갱신됨).
+  # data.json만 바뀐 봇 커밋은 제외해 무한 루프를 막는다.
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/data.json'
   schedule:
     # 15분마다 갱신. 정시(:00)는 전 세계 작업이 몰려 지연이 크므로 피해서 :05/:20/:35/:50에 실행.
     - cron: "5,20,35,50 * * * *"
