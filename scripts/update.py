@@ -108,7 +108,11 @@ def fetch_flight(number, d):
     네트워크·HTTP 실패 시 FetchError 발생(호출부에서 '확인 실패'로 처리)."""
     url = (f"https://www.flightstats.com/v2/api-next/flight-tracker/"
            f"QR/{number}/{d.year}/{d.month}/{d.day}")
-    raw = json.loads(http_get(url))  # 실패 시 FetchError 전파
+    body = http_get(url)             # 네트워크 실패 시 FetchError 전파
+    try:
+        raw = json.loads(body)
+    except ValueError as e:          # 200이지만 비-JSON(차단·레이트리밋 HTML 등) → 조회 실패로 취급
+        raise FetchError(f"non-JSON response: {e}")
     data = raw.get("data") or {}
     if not data or not data.get("status"):
         return None
@@ -147,6 +151,30 @@ def to_local(utc_str, tz):
         return dt.astimezone(tz).strftime("%H:%M")
     except ValueError:
         return None
+
+
+def to_local_dt(utc_str, tz):
+    """UTC ISO 문자열 → 해당 tz의 aware datetime. 실패 시 None."""
+    if not utc_str:
+        return None
+    try:
+        return datetime.fromisoformat(utc_str.replace("Z", "+00:00")).astimezone(tz)
+    except ValueError:
+        return None
+
+
+def fmt_rel(dt, base_date):
+    """시각을 'HH:MM'로, 도착이 출발일보다 뒤면 '익일 HH:MM'(+N일)로 표기.
+    야간편(예: QR862 도하 19:45 출발 → 서울 익일 10:30 도착)의 날짜 넘김을 잃지 않는다."""
+    if dt is None:
+        return None
+    hm = dt.strftime("%H:%M")
+    delta = (dt.date() - base_date).days
+    if delta <= 0:
+        return hm
+    if delta == 1:
+        return "익일 " + hm
+    return f"+{delta}일 " + hm
 
 
 def classify(fs, entry, fno, offset, d, alerts):
@@ -214,11 +242,15 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
                     if code == "L":            # 이미 도착 완료 → 표시하지 않음
                         continue
                     confirmed_any = True
+                    entry["confirmed"] = True   # 이 날짜 상태가 실데이터로 확인됨(영공 폐쇄 판정의 근거가 됨)
                     worst = max(fs["delay_dep"], fs["delay_arr"])
                     entry["delay"] = worst
-                    # ±3일 이내: 실제(예상→예정) 시각을 반영 → 스케줄 변경/지연(예: 17:05→17:15)까지 표시
-                    dep_t = to_local(fs["dep_est_utc"], tz) or to_local(fs["dep_sched_utc"], tz)
-                    arr_t = to_local(fs["arr_est_utc"], arr_tz) or to_local(fs["arr_sched_utc"], arr_tz)
+                    # ±3일 이내: 실제(예상→예정) 시각을 반영 → 스케줄 변경/지연(예: 17:05→17:15)까지 표시.
+                    #  날짜 넘김(야간편)은 출발일 기준으로 '익일' 표기를 유지한다.
+                    dep_dt = to_local_dt(fs["dep_est_utc"], tz) or to_local_dt(fs["dep_sched_utc"], tz)
+                    arr_dt = to_local_dt(fs["arr_est_utc"], arr_tz) or to_local_dt(fs["arr_sched_utc"], arr_tz)
+                    dep_t = fmt_rel(dep_dt, d)
+                    arr_t = fmt_rel(arr_dt, d)
                     if dep_t:
                         entry["dep"] = dep_t
                     if arr_t:
