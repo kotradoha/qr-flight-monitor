@@ -1,33 +1,30 @@
 {
- "generated_at_utc": "2026-07-17T19:57:25+00:00",
- "generated_at_doha": "2026-07-17 22:57",
- "generated_at_seoul": "2026-07-18 04:57",
+ "generated_at_utc": "2026-07-17T21:37:38+00:00",
+ "generated_at_doha": "2026-07-18 00:37",
+ "generated_at_seoul": "2026-07-18 06:37",
+ "degraded": false,
+ "fetch_health": {
+  "ok": 35,
+  "err": 0
+ },
  "airspace": {
   "risk_level": "Three",
-  "closed": false,
-  "status": "caution",
-  "closed_suppressed": true,
+  "keyword_closed": true,
   "advisories": [
    {
     "code": "EASA CZIB 2026-07",
-    "valid_until": "July 29, 2026"
-   },
-   {
-    "code": "France NOTAM F1553/26",
-    "valid_until": "July 22, 2026"
+    "valid_until": null
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-17T19:57:32+00:00",
+  "checked_at_utc": "2026-07-17T21:37:42+00:00",
   "ok": true,
-  "level": "caution"
- },
- "qa_alerts": {
-  "ok": true,
-  "korea_route_mentions": [],
-  "source": "https://www.qatarairways.com/en/travel-alerts.html"
+  "level": "caution",
+  "closed": false,
+  "status": "caution"
  },
  "alerts": [],
+ "travel_updates": [],
  "order": [
   "QR858",
   "QR859",
@@ -50,18 +47,11 @@
    "daily": true,
    "note": "매일 운항 · A350-1000",
    "note_en": "Daily · A350-1000",
+   "badge": {
+    "state": "good",
+    "kind": "normal"
+   },
    "days": [
-    {
-     "date": "2026-07-16",
-     "label": "7/16 (목)",
-     "label_en": "Thu 7/16",
-     "dep": "02:28",
-     "arr": "17:16",
-     "kind": "landed",
-     "cls": "good",
-     "delay": 11,
-     "confirmed": true
-    },
     {
      "date": "2026-07-17",
      "label": "7/17 (금)",
@@ -126,6 +116,10 @@
    "daily": true,
    "note": "매일 운항 · A350-1000",
    "note_en": "Daily · A350-1000",
+   "badge": {
+    "state": "good",
+    "kind": "inflight"
+   },
    "days": [
     {
      "date": "2026-07-17",
@@ -172,7 +166,15 @@
      "confirmed": true
     }
    ],
-   "position": null,
+   "position": {
+    "lat": 22.530624,
+    "lon": 85.923673,
+    "alt_ft": 36000,
+    "gs_kt": 537.0,
+    "callsign": "QTR859",
+    "seen_at_utc": "2026-07-17T21:37:39+00:00",
+    "source": "adsb.lol"
+   },
    "fr24": "https://www.flightradar24.com/data/flights/qr859"
   },
   "QR862": {
@@ -191,6 +193,10 @@
    "daily": false,
    "note": "비정기 운항 (최근 목요일 위주) · 스케줄에 없는 날은 결항 아님",
    "note_en": "Not daily (recently Thursdays) · absence from schedule is not a cancellation",
+   "badge": {
+    "state": "good",
+    "kind": "normal"
+   },
    "days": [
     {
      "date": "2026-07-16",
@@ -207,6 +213,5 @@
    "position": null,
    "fr24": "https://www.flightradar24.com/data/flights/qr862"
   }
- },
- "travel_updates": []
+ }
 }
