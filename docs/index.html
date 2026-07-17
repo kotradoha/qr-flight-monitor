@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://hits.sh; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'">
 <title>카타르항공 도하↔인천 운항 모니터링 대시보드 | Qatar Airways DOH↔ICN Flight Monitoring Dashboard</title>
-<meta name="description" content="카타르항공 QR858·QR862·QR859 도하-인천 노선 영공폐쇄·지연·결항 상시 모니터링 (매시간 자동 갱신)">
+<meta name="description" content="카타르항공 QR858·QR862·QR859 도하-인천 노선 영공폐쇄·지연·결항 상시 모니터링 (15분마다 자동 갱신)">
 <style>
   :root {
     color-scheme: light;
@@ -234,7 +234,7 @@ var QR_ALERTS_URL = "https://www.qatarairways.com/en/travel-alerts.html";
 var I18N = {
   ko: {
     title: "카타르항공 도하 ↔ 인천 운항 모니터링 대시보드",
-    subtitle: "카타르항공 도하–인천 노선의 정상 운항·지연·결항 여부와 카타르 영공 상황을 매시간 자동으로 불러와 보여주는 대시보드입니다. 표에는 현재 비행 중이거나 앞으로 약 1주일간 예정된 항공편만 표시되며, 예정편은 카타르항공 공식 스케줄과 동일합니다.",
+    subtitle: "카타르항공 도하–인천 노선의 정상 운항·지연·결항 여부와 카타르 영공 상황을 15분마다 자동으로 불러와 보여주는 대시보드입니다. 표에는 현재 비행 중이거나 앞으로 약 1주일간 예정된 항공편만 표시되며, 예정편은 카타르항공 공식 스케줄과 동일합니다.",
     updated: function(d){ return "마지막 확인: " + d.generated_at_doha + " (카타르) / " + d.generated_at_seoul + " (한국)"; },
     stale_note: "⚠ 실시간 운항 데이터 갱신이 지연되고 있습니다. 아래 상태는 정기 스케줄 기준이며, 최신 상태는 각 항공편의 Flightradar24·FlightStats·카타르항공 공식 링크에서 확인해 주세요.",
     load_error: "데이터를 불러오지 못했습니다. 잠시 후 새로고침해 주세요.",
@@ -282,7 +282,7 @@ var I18N = {
     ],
     foot_sources: "※ 데이터 출처: <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a>(영공 폐쇄·권고) · <a href='https://dohahamadairport.com/airlines/flight-status' target='_blank' rel='noopener'>하마드공항</a>(공항 정보) · <a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>Qatar Airways(카타르항공)</a>(운항 정보, 여행 경보) · <a href='https://www.flightstats.com/' target='_blank' rel='noopener'>Cirium/FlightStats</a>(운항 상태) · <a href='https://www.flightradar24.com/' target='_blank' rel='noopener'>Flightradar24</a>(실시간 위치)",
     foot_legend: "※ 상태: 운항 예정 / 비행 중 / ⚠ 지연 / ✕ 결항 / 확인 중(실시간 조회 일시 불가)",
-    foot_notice: "본 페이지는 API로 매시간 단위 연동시킨 참고용 모니터링 정보이며, 항공권 예약·변경 등 최종 확인은 반드시 <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>카타르항공 공식 채널</a>에서 하시기 바랍니다.",
+    foot_notice: "본 페이지는 API로 15분마다 연동시킨 참고용 모니터링 정보이며, 항공권 예약·변경 등 최종 확인은 반드시 <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>카타르항공 공식 채널</a>에서 하시기 바랍니다.",
     travel_qr: "카타르항공 여행경보(Travel Alerts)",
     travel_hamad: "하마드공항 운항정보",
     sb_title: "🔔 운항·영공 안내 (Travel Update)",
@@ -299,7 +299,7 @@ var I18N = {
   },
   en: {
     title: "Qatar Airways Doha ↔ Incheon Flight Monitoring Dashboard",
-    subtitle: "A dashboard that automatically pulls and displays, every hour, the on-time / delay / cancellation status of Qatar Airways' Doha–Incheon flights and Qatar airspace conditions. The tables show only flights currently in the air or scheduled over roughly the next week; scheduled flights match Qatar Airways' official timetable.",
+    subtitle: "A dashboard that automatically pulls and displays, every 15 minutes, the on-time / delay / cancellation status of Qatar Airways' Doha–Incheon flights and Qatar airspace conditions. The tables show only flights currently in the air or scheduled over roughly the next week; scheduled flights match Qatar Airways' official timetable.",
     updated: function(d){ return "Last checked: " + d.generated_at_doha + " (Qatar) / " + d.generated_at_seoul + " (Korea)"; },
     stale_note: "⚠ Live flight data is delayed. The statuses below are based on the regular schedule; for the latest status use each flight's Flightradar24 / FlightStats / Qatar Airways links.",
     load_error: "Failed to load data. Please refresh in a moment.",
@@ -347,7 +347,7 @@ var I18N = {
     ],
     foot_sources: "※ Sources: <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a> (airspace closures & advisories) · <a href='https://dohahamadairport.com/airlines/flight-status' target='_blank' rel='noopener'>Hamad Airport</a> (airport flight info) · <a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>Qatar Airways</a> (airline info, travel alerts) · <a href='https://www.flightstats.com/' target='_blank' rel='noopener'>Cirium/FlightStats</a> (flight status) · <a href='https://www.flightradar24.com/' target='_blank' rel='noopener'>Flightradar24</a> (live position)",
     foot_legend: "※ Status: Scheduled / In flight / ⚠ delayed / ✕ cancelled / checking (live lookup temporarily unavailable)",
-    foot_notice: "This page is reference-only monitoring information integrated hourly via API; for bookings and final confirmation always use the <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>official Qatar Airways channel</a>.",
+    foot_notice: "This page is reference-only monitoring information integrated every 15 minutes via API; for bookings and final confirmation always use the <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>official Qatar Airways channel</a>.",
     travel_qr: "Qatar Airways Travel Alerts",
     travel_hamad: "Hamad Airport flight status",
     sb_title: "🔔 Flight & Airspace Update",
@@ -364,7 +364,7 @@ var I18N = {
   },
   ar: {
     title: "لوحة متابعة رحلات الخطوط الجوية القطرية بين الدوحة وإنتشون",
-    subtitle: "لوحة تعرض تلقائيًا كل ساعة حالة رحلات الخطوط الجوية القطرية بين الدوحة وإنتشون (في الموعد/التأخير/الإلغاء) وأوضاع المجال الجوي القطري. وتعرض الجداول فقط الرحلات الجارية حاليًا أو المجدولة خلال نحو أسبوع قادم؛ والرحلات المجدولة تطابق الجدول الرسمي للخطوط القطرية.",
+    subtitle: "لوحة تعرض تلقائيًا كل 15 دقيقة حالة رحلات الخطوط الجوية القطرية بين الدوحة وإنتشون (في الموعد/التأخير/الإلغاء) وأوضاع المجال الجوي القطري. وتعرض الجداول فقط الرحلات الجارية حاليًا أو المجدولة خلال نحو أسبوع قادم؛ والرحلات المجدولة تطابق الجدول الرسمي للخطوط القطرية.",
     updated: function(d){ return "آخر تحديث: " + d.generated_at_doha + " (قطر) / " + d.generated_at_seoul + " (كوريا)"; },
     stale_note: "⚠ تحديث بيانات الرحلات المباشرة متأخر حاليًا. الحالات أدناه مبنية على الجدول المعتاد؛ لأحدث حالة استخدم روابط Flightradar24 / FlightStats / الخطوط القطرية لكل رحلة.",
     load_error: "تعذّر تحميل البيانات. يرجى تحديث الصفحة بعد قليل.",
@@ -401,7 +401,7 @@ var I18N = {
     links: ["الموقع المباشر (Flightradar24)", "حالة الرحلة (FlightStats)", "الموقع الرسمي للخطوط القطرية"],
     foot_sources: "※ المصادر: <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a> (إغلاق/تحذيرات المجال الجوي) · <a href='https://dohahamadairport.com/airlines/flight-status' target='_blank' rel='noopener'>مطار حمد</a> (معلومات رحلات المطار) · <a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>الخطوط القطرية</a> (معلومات الرحلات وتنبيهات السفر) · <a href='https://www.flightstats.com/' target='_blank' rel='noopener'>Cirium/FlightStats</a> (حالة الرحلة) · <a href='https://www.flightradar24.com/' target='_blank' rel='noopener'>Flightradar24</a> (الموقع المباشر)",
     foot_legend: "※ الحالة: مجدولة / في الجو / ⚠ تأخير / ✕ إلغاء / جارٍ التحقق (تعذّر الجلب المباشر مؤقتًا)",
-    foot_notice: "هذه الصفحة معلومات متابعة للاسترشاد فقط، مُحدّثة عبر ربط API كل ساعة؛ للحجز والتأكيد النهائي استخدم دائمًا <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>القناة الرسمية للخطوط القطرية</a>.",
+    foot_notice: "هذه الصفحة معلومات متابعة للاسترشاد فقط، مُحدّثة عبر ربط API كل 15 دقيقة؛ للحجز والتأكيد النهائي استخدم دائمًا <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>القناة الرسمية للخطوط القطرية</a>.",
     travel_qr: "تنبيهات سفر الخطوط القطرية",
     travel_hamad: "حالة رحلات مطار حمد",
     sb_title: "🔔 تحديث الرحلات والمجال الجوي",
