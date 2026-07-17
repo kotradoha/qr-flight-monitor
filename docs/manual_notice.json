@@ -1,0 +1,4 @@
+{
+  "_help": "긴급 Travel Update를 표 위에 띄우려면 아래 items 에 항목을 추가하세요. 비워두면 표시되지 않습니다(영공 주의/폐쇄 시에는 공식 링크 안내가 자동 표시됨). 예시: {\"title\":\"[카타르항공] 도하-인천 7/20 결항 안내\",\"title_en\":\"[Qatar Airways] DOH-ICN Jul 20 cancelled\",\"title_ar\":\"...\",\"url\":\"https://www.qatarairways.com/en/travel-alerts.html\"}",
+  "items": []
+}

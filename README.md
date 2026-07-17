@@ -10,6 +10,8 @@ KOTRA 도하무역관에서 현지 교민에게 제공하는 카타르항공 한
 - `docs/data.json` — 운항 데이터 (GitHub Actions가 매시간 갱신)
 - `scripts/update.py` — 데이터 수집 스크립트 (Python 표준 라이브러리만 사용)
 - `.github/workflows/update.yml` — 매시간 자동 실행 워크플로
+- `docs/manual_notice.json` — 긴급 Travel Update 수동 공지(운영자 편집; items에 추가하면 표 위에 즉시 표시)
+- 지원 언어: 한국어 / English / العربية(아랍어, RTL)
 
 ## 데이터 출처
 

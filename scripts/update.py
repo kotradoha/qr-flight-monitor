@@ -458,6 +458,25 @@ def main():
     # 열화 판정: 실시간 확인이 하나도 안 됐고 조회 오류가 있었으면 degraded
     degraded = (confirmed_total == 0 and health["err"] > 0)
 
+    # 긴급 Travel Update: 운영자가 docs/manual_notice.json 을 편집하면 표 위에 즉시 표시된다.
+    # (카타르항공/하마드공항 공식 공지를 붙여넣는 용도. 자동 스크랩은 JS 렌더 페이지라 신뢰도가 낮아
+    #  공식 링크는 프론트에서 항상 제공하고, 구체 문구는 이 파일로 운영자가 관리한다.)
+    travel_updates = []
+    mn = ROOT / "docs" / "manual_notice.json"
+    if mn.exists():
+        try:
+            md = json.loads(mn.read_text(encoding="utf-8"))
+            for it in (md.get("items") or []):
+                if it.get("title") or it.get("title_en") or it.get("title_ar"):
+                    travel_updates.append({
+                        "title": it.get("title", ""),
+                        "title_en": it.get("title_en", ""),
+                        "title_ar": it.get("title_ar", ""),
+                        "url": it.get("url", "https://www.qatarairways.com/en/travel-alerts.html"),
+                    })
+        except Exception as e:  # noqa: BLE001
+            print(f"[warn] manual_notice parse: {e}", file=sys.stderr)
+
     out = {
         "generated_at_utc": now_utc.isoformat(timespec="seconds"),
         "generated_at_doha": now_utc.astimezone(TZ_DOHA).strftime("%Y-%m-%d %H:%M"),
@@ -466,6 +485,7 @@ def main():
         "fetch_health": health,
         "airspace": airspace,
         "alerts": alerts,
+        "travel_updates": travel_updates,
         "order": order,
         "flights": flights_out,
     }
