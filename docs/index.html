@@ -111,15 +111,20 @@
   .links a { color: var(--accent); font-size: 12.5px; text-decoration: none; }
   .links a:hover { text-decoration: underline; }
 
-  .travelbox { border-radius: 12px; padding: 15px 16px; margin-top: 16px;
-    border: 1px solid var(--border); background: var(--warn-bg); }
-  .travelbox.crit { background: var(--crit-bg); border-color: rgba(208,59,59,0.35); }
-  .travelbox h2 { font-size: 14px; font-weight: 800; color: var(--warn-text); }
-  .travelbox.crit h2 { color: var(--crit-text); }
-  .travelbox .titem { font-size: 12.5px; color: var(--text-primary); margin-top: 7px; line-height: 1.5; }
-  .travel-links { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 10px 16px; }
-  .travel-links a { font-size: 12.5px; font-weight: 600; color: var(--accent); text-decoration: none; }
-  .travel-links a:hover { text-decoration: underline; }
+  .statusbox { border-radius: 12px; padding: 15px 18px; margin-top: 16px; border: 1px solid var(--border); }
+  .statusbox.open { background: var(--good-bg); }
+  .statusbox.caution { background: var(--warn-bg); }
+  .statusbox.closed { background: var(--crit-bg); border-color: rgba(208,59,59,0.35); }
+  .statusbox.unknown { background: var(--banner-bg); }
+  .sb-title { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; }
+  .statusbox.open .sb-title { color: var(--good-text); }
+  .statusbox.caution .sb-title { color: var(--warn-text); }
+  .statusbox.closed .sb-title { color: var(--crit-text); }
+  .sb-body { font-size: 12.5px; color: var(--text-secondary); margin-top: 7px; line-height: 1.6; }
+  .sb-body b { color: var(--text-primary); }
+  .sb-links { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 9px 16px; }
+  .sb-links a { font-size: 12.5px; font-weight: 600; color: var(--accent); text-decoration: none; }
+  .sb-links a:hover { text-decoration: underline; }
   .section { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
              padding: 18px; margin-top: 16px; }
   .section h2 { font-size: 15px; font-weight: 700; }
@@ -193,24 +198,11 @@
     <div class="stale" id="staleNote"></div>
     <div id="loadError" data-i18n="load_error"></div>
 
-    <div class="airstrip open" id="airstrip">
-      <span class="astatus"></span>
-      <div>
-        <div class="atitle" id="airTitle"></div>
-        <div class="asub" id="airSub"></div>
-        <div class="asrc" id="airSrc"></div>
-      </div>
-    </div>
-
-    <div class="banner" id="banner" style="display:none">
-      <h2><span class="dot"></span><span id="bannerTitle"></span></h2>
-      <p id="bannerBody"></p>
-    </div>
-
-    <div class="travelbox" id="travelBox" style="display:none">
-      <h2 id="travelTitle"></h2>
-      <div id="travelItems"></div>
-      <div class="travel-links" id="travelLinks"></div>
+    <!-- 운항·영공 통합 안내 (Travel Update + 영공 폐쇄여부) -->
+    <div class="statusbox open" id="statusBox">
+      <div class="sb-title" id="sbTitle"></div>
+      <div class="sb-body" id="sbBody"></div>
+      <div class="sb-links" id="sbLinks"></div>
     </div>
 
     <div id="map"></div>
@@ -243,7 +235,7 @@ function detectLang() {
 }
 var LANG = detectLang();
 var SAFE_URL = "https://safeairspace.net/qatar/";
-var HAMAD_URL = "https://dohahamadairport.com/";
+var HAMAD_URL = "https://dohahamadairport.com/airlines/flight-status";
 var QR_ALERTS_URL = "https://www.qatarairways.com/en/travel-alerts.html";
 
 var I18N = {
@@ -296,12 +288,20 @@ var I18N = {
         d: "✕ QR859 (인천→도하, 7/19) 결항\n· 대상편: 7/19 인천 01:20 출발편\n· 재예약: 카타르항공 콜센터 또는 공식 사이트(fs.qatarairways.com)" }
     ],
     foot_sources: "데이터 출처: <a href='https://www.flightstats.com/' target='_blank' rel='noopener'>Cirium/FlightStats</a>(운항 상태) · <a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>카타르항공 공식 여행 경보</a> · <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a>(영공 폐쇄·권고) · <a href='https://adsb.lol/' target='_blank' rel='noopener'>adsb.lol</a>(실시간 위치) · <a href='https://www.flightradar24.com/' target='_blank' rel='noopener'>Flightradar24</a>(위치 추적)",
-    foot_legend: "상태 표기: ✓ 확인됨 / 스케줄 예정 / 확인 중 / ⚠ 지연 / ✕ 결항 — \"확인됨\"은 개별 편 데이터가 확인된 날짜(약 ±3일), \"스케줄 예정\"은 정기 스케줄 기준, \"확인 중\"은 실시간 조회가 일시적으로 안 된 상태입니다.",
+    foot_legend: "표에는 카타르항공에서 검색되는(운항이 확인된) 편만 표시합니다. 상태: ✓ 확인됨 / ⚠ 지연 / ✕ 결항 / 확인 중(실시간 조회 일시 불가).",
     foot_notice: "본 페이지는 데이터 출처 웹사이트의 항공 정보 등 실시간 API 연동을 기준으로 한 참고용 모니터링 정보이며, 항공권 예약·변경 등 최종 확인은 반드시 <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>카타르항공 공식 채널</a>에서 하시기 바랍니다.",
-    travel_title: "🔔 긴급 안내 · Travel Update",
-    travel_prompt: "카타르 영공 관련 권고가 발효 중입니다. 아래 카타르항공·하마드공항 공식 Travel Update에서 최신 운항 공지를 꼭 확인해 주세요.",
     travel_qr: "카타르항공 여행경보(Travel Alerts)",
     travel_hamad: "하마드공항 운항정보",
+    sb_title: "🔔 운항·영공 안내 (Travel Update)",
+    lbl_advisories: "근거 권고: ",
+    sb_flightalerts: "항공편 차질: ",
+    sb_seetable: " (아래 표에서 확인)",
+    air_status: function(level, risk){
+      if (level === "closed") return "카타르 영공: <b>폐쇄 확인됨</b>. 도하↔인천 노선의 결항·회항·지연 가능성이 높습니다.";
+      if (level === "caution") return "카타르 영공 폐쇄 여부: <b>현재 폐쇄되지 않음</b>. 다만 카타르 영공에 대한 국제 회피 권고가 발효 중입니다" + (risk ? " (권고 등급 " + risk + ")" : "") + ".";
+      if (level === "unknown") return "카타르 영공: 상태를 일시적으로 확인하지 못했습니다. 아래 공식 링크에서 확인해 주세요.";
+      return "카타르 영공 폐쇄 여부: <b>폐쇄되지 않음(정상 운영)</b>. 도하↔인천 노선 정상 운항 중입니다" + (risk ? " (권고 등급 " + risk + ")" : "") + ".";
+    },
     visitors: "누적 방문:"
   },
   en: {
@@ -353,12 +353,20 @@ var I18N = {
         d: "✕ QR859 (ICN→DOH, Jul 19) cancelled\n· Flight: Jul 19 Incheon 01:20 departure\n· Rebook via the Qatar Airways call center or official site (fs.qatarairways.com)" }
     ],
     foot_sources: "Sources: <a href='https://www.flightstats.com/' target='_blank' rel='noopener'>Cirium/FlightStats</a> (flight status) · <a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>Qatar Airways official travel alerts</a> · <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a> (airspace closures & advisories) · <a href='https://adsb.lol/' target='_blank' rel='noopener'>adsb.lol</a> (live positions) · <a href='https://www.flightradar24.com/' target='_blank' rel='noopener'>Flightradar24</a> (tracking)",
-    foot_legend: "Legend: ✓ confirmed / per schedule / checking / ⚠ delayed / ✕ cancelled — \"confirmed\" means per-flight data exists (about ±3 days); \"per schedule\" is the regular timetable; \"checking\" means live lookup is temporarily unavailable.",
+    foot_legend: "Only flights searchable on Qatar Airways (i.e. confirmed) are shown. Status: ✓ confirmed / ⚠ delayed / ✕ cancelled / checking (live lookup temporarily unavailable).",
     foot_notice: "This page is reference-only monitoring information based on real-time API integration of flight data from the source websites; for bookings and final confirmation always use the <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>official Qatar Airways channel</a>.",
-    travel_title: "🔔 Travel Update",
-    travel_prompt: "Advisories for Qatar airspace are in effect. Please check the latest operational notices on Qatar Airways' and Hamad Airport's official Travel Updates below.",
     travel_qr: "Qatar Airways Travel Alerts",
-    travel_hamad: "Hamad Airport flight info",
+    travel_hamad: "Hamad Airport flight status",
+    sb_title: "🔔 Flight & Airspace Update",
+    lbl_advisories: "Advisories: ",
+    sb_flightalerts: "Flights affected: ",
+    sb_seetable: " (see tables below)",
+    air_status: function(level, risk){
+      if (level === "closed") return "Qatar airspace: <b>closure confirmed</b>. Cancellations, diversions or delays on the Doha↔Incheon route are likely.";
+      if (level === "caution") return "Qatar airspace closure status: <b>not currently closed</b>. However, international advisories to avoid Qatari airspace are in effect" + (risk ? " (advisory level " + risk + ")" : "") + ".";
+      if (level === "unknown") return "Qatar airspace: status temporarily unavailable. Please check the official links below.";
+      return "Qatar airspace closure status: <b>not closed (operating normally)</b>. The Doha↔Incheon route is operating normally" + (risk ? " (advisory level " + risk + ")" : "") + ".";
+    },
     visitors: "Total visits:"
   },
   ar: {
@@ -399,12 +407,20 @@ var I18N = {
     badge_delayed: function(m){ return "⚠ تأخير " + m + " دقيقة"; },
     links: ["الموقع المباشر (Flightradar24)", "FlightStats", "الموقع الرسمي للخطوط القطرية"],
     foot_sources: "المصادر: <a href='https://www.flightstats.com/' target='_blank' rel='noopener'>Cirium/FlightStats</a> (حالة الرحلة) · <a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>تنبيهات سفر الخطوط القطرية</a> · <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a> (إغلاق/تحذيرات المجال) · <a href='https://adsb.lol/' target='_blank' rel='noopener'>adsb.lol</a> (مواقع مباشرة) · <a href='https://www.flightradar24.com/' target='_blank' rel='noopener'>Flightradar24</a>",
-    foot_legend: "الرموز: ✓ مؤكد / حسب الجدول / جارٍ التحقق / ⚠ تأخير / ✕ إلغاء — \"مؤكد\" يعني توفّر بيانات الرحلة (نحو ±3 أيام)؛ \"حسب الجدول\" هو الجدول المعتاد؛ \"جارٍ التحقق\" يعني تعذّر الجلب المباشر مؤقتًا.",
+    foot_legend: "تُعرض فقط الرحلات التي يمكن البحث عنها لدى الخطوط القطرية (أي المؤكدة). الحالة: ✓ مؤكد / ⚠ تأخير / ✕ إلغاء / جارٍ التحقق (تعذّر الجلب المباشر مؤقتًا).",
     foot_notice: "هذه الصفحة معلومات متابعة للاسترشاد فقط مبنية على ربط API مباشر من مواقع المصادر؛ للحجز والتأكيد النهائي استخدم دائمًا <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>القناة الرسمية للخطوط القطرية</a>.",
-    travel_title: "🔔 تحديث السفر · Travel Update",
-    travel_prompt: "توجد تحذيرات بشأن المجال الجوي القطري. يرجى مراجعة أحدث الإشعارات التشغيلية عبر تحديثات السفر الرسمية للخطوط القطرية ومطار حمد أدناه.",
     travel_qr: "تنبيهات سفر الخطوط القطرية",
-    travel_hamad: "معلومات رحلات مطار حمد",
+    travel_hamad: "حالة رحلات مطار حمد",
+    sb_title: "🔔 تحديث الرحلات والمجال الجوي",
+    lbl_advisories: "التحذيرات: ",
+    sb_flightalerts: "رحلات متأثرة: ",
+    sb_seetable: " (انظر الجداول أدناه)",
+    air_status: function(level, risk){
+      if (level === "closed") return "المجال الجوي القطري: <b>تأكّد الإغلاق</b>. من المرجّح حدوث إلغاءات أو تحويلات أو تأخيرات على خط الدوحة↔إنتشون.";
+      if (level === "caution") return "حالة إغلاق المجال الجوي القطري: <b>غير مغلق حاليًا</b>. لكن توجد تحذيرات دولية بتجنّب المجال الجوي القطري" + (risk ? " (مستوى التحذير " + risk + ")" : "") + ".";
+      if (level === "unknown") return "المجال الجوي القطري: الحالة غير متاحة مؤقتًا. يرجى التحقق عبر الروابط الرسمية أدناه.";
+      return "حالة إغلاق المجال الجوي القطري: <b>غير مغلق (يعمل بشكل طبيعي)</b>. خط الدوحة↔إنتشون يعمل بشكل طبيعي" + (risk ? " (مستوى التحذير " + risk + ")" : "") + ".";
+    },
     visitors: "إجمالي الزيارات:"
   }
 };
@@ -472,105 +488,53 @@ function advisoryLines(d) {
   });
 }
 
-function renderAirstrip() {
-  var strip = document.getElementById("airstrip");
-  var a = (DATA && DATA.airspace) || {};
-  var level = a.level || (a.closed ? "closed" : (a.ok === false ? "unknown" : "open"));
-  var sub = document.getElementById("airSub");
-  if (level === "closed") {
-    strip.className = "airstrip closed";
-    document.getElementById("airTitle").textContent = t().air_closed_title;
-    sub.innerHTML = t().air_closed_sub + "<br>" + closureDetailLines(DATA).join("<br>");
-  } else if (level === "caution") {
-    strip.className = "airstrip caution";
-    document.getElementById("airTitle").textContent = t().air_caution_title;
-    var adv = advisoryLines(DATA);
-    sub.innerHTML = t().air_caution_sub(a.risk_level ? esc(a.risk_level) : "") +
-      (adv.length ? "<br>" + (LANG === "ko" ? "근거 권고: " : "Advisories: ") + adv.join(", ") : "");
-  } else if (level === "unknown") {
-    strip.className = "airstrip unknown";
-    document.getElementById("airTitle").textContent = t().air_unknown_title;
-    sub.textContent = t().air_unknown_sub;
-  } else {
-    strip.className = "airstrip open";
-    document.getElementById("airTitle").textContent = t().air_open_title;
-    sub.textContent = t().air_open_sub(a.risk_level ? esc(a.risk_level) : "");
-  }
-  document.getElementById("airSrc").innerHTML = t().air_src();
-}
+function renderStatusBox() {
+  var d = DATA, a = d.airspace || {}, level = a.level || "open";
+  var box = document.getElementById("statusBox");
+  box.className = "statusbox " + level;
+  document.getElementById("sbTitle").textContent = t().sb_title;
 
-function renderTravel() {
-  var box = document.getElementById("travelBox");
-  var a = (DATA && DATA.airspace) || {};
-  var level = a.level || "open";
-  var items = (DATA && DATA.travel_updates) || [];
-  // 표시 조건: 운영자 공지가 있거나, 영공이 주의/폐쇄 상태(긴급 상황)일 때
-  var show = items.length > 0 || level === "caution" || level === "closed";
-  if (!show) { box.style.display = "none"; return; }
-  box.className = "travelbox" + (level === "closed" ? " crit" : "");
-  document.getElementById("travelTitle").textContent = t().travel_title;
-  var itemsHtml = "";
-  if (items.length) {
-    itemsHtml = items.map(function(it){
-      var title = (LANG === "ko" ? it.title : (LANG === "ar" ? (it.title_ar || it.title_en || it.title) : (it.title_en || it.title))) || "";
-      var url = it.url || "https://www.qatarairways.com/en/travel-alerts.html";
-      return "<div class='titem'>• <a href='" + esc(url) + "' target='_blank' rel='noopener' style='color:inherit;text-decoration:underline'>" + esc(title) + "</a></div>";
-    }).join("");
-  } else {
-    itemsHtml = "<div class='titem'>" + t().travel_prompt + "</div>";
+  var lines = [];
+  // 1) 카타르 영공 폐쇄 여부 (객관적)
+  lines.push(t().air_status(level, a.risk_level ? esc(a.risk_level) : ""));
+  // 2) 근거 권고(유효기간)
+  if (level === "caution" || level === "closed") {
+    var adv = advisoryLines(d);
+    if (adv.length) lines.push(t().lbl_advisories + adv.join(", "));
   }
-  document.getElementById("travelItems").innerHTML = itemsHtml;
-  document.getElementById("travelLinks").innerHTML =
+  // 3) 항공편 차질 요약
+  var alerts = (d.alerts || []).filter(function(x){ return x.date; });
+  if (alerts.length) lines.push(t().sb_flightalerts + affectedSummary(alerts) + t().sb_seetable);
+  // 4) 실시간 조회 지연
+  if (d.degraded) lines.push(t().stale_note);
+  // 5) 운영자 긴급 공지(Travel Update)
+  (d.travel_updates || []).forEach(function(it){
+    var title = (LANG === "ko" ? it.title : (LANG === "ar" ? (it.title_ar || it.title_en || it.title) : (it.title_en || it.title))) || "";
+    if (title) lines.push("📌 <a href='" + esc(it.url || "https://www.qatarairways.com/en/travel-alerts.html") +
+      "' target='_blank' rel='noopener' style='color:inherit;text-decoration:underline'>" + esc(title) + "</a>");
+  });
+  document.getElementById("sbBody").innerHTML = lines.join("<br>");
+
+  // 공식 확인 링크 (항상 제공)
+  document.getElementById("sbLinks").innerHTML =
     "<a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>" + t().travel_qr + " →</a>" +
-    "<a href='https://www.dohahamadairport.com/flights/flight-information' target='_blank' rel='noopener'>" + t().travel_hamad + " →</a>";
-  box.style.display = "block";
+    "<a href='https://dohahamadairport.com/airlines/flight-status' target='_blank' rel='noopener'>" + t().travel_hamad + " →</a>" +
+    "<a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace →</a>";
 }
 
 function render() {
   if (!DATA) return;
   var data = DATA;
   document.getElementById("updated").textContent = t().updated(data);
-  renderTravel();
   var stale = document.getElementById("staleNote");
-  if (data.degraded) { stale.textContent = t().stale_note; stale.style.display = "block"; }
-  else { stale.style.display = "none"; }
-  renderAirstrip();
-
-  var banner = document.getElementById("banner");
-  var alerts = (data.alerts || []).filter(function(a){ return a.date; });
-  var closed = data.airspace && data.airspace.closed;
-  var risk = (data.airspace && data.airspace.risk_level) || null;
-  if (alerts.length > 0 || closed) {
-    banner.className = "banner crit";
-    var msgs = alerts.map(function(a) {
-      var base = esc(a.flight) + " " + esc((a.date || "").slice(5).replace("-", "/"));
-      if (a.type === "delay") return base + (LANG === "ko" ? " 지연 " + esc(a.minutes) + "분" : " delayed " + esc(a.minutes) + " min");
-      if (a.type === "cancelled") return base + (LANG === "ko" ? " 결항" : " cancelled");
-      return base + (LANG === "ko" ? " 회항" : " diverted");
-    });
-    if (closed) msgs.unshift(LANG === "ko" ? "카타르 영공 폐쇄" : "Qatar airspace closed");
-    document.getElementById("bannerTitle").textContent = t().banner_alert_title + " — " + msgs.join(" · ");
-    var bodyHtml = t().banner_alert_body;
-    if (closed) bodyHtml += "<br><br>" + closureDetailLines(data).join("<br>");
-    document.getElementById("bannerBody").innerHTML = bodyHtml;
-    banner.style.display = "";
-  } else if (data.degraded) {
-    banner.className = "banner";
-    document.getElementById("bannerTitle").textContent = t().banner_degraded_title;
-    document.getElementById("bannerBody").innerHTML = t().banner_degraded_body;
-    banner.style.display = "";
-  } else {
-    // 이상 없음 — 영공 박스와 항공편 카드로 상태가 충분히 표시되므로 배너는 숨김
-    banner.style.display = "none";
-  }
+  stale.style.display = "none";  // 상세 안내는 통합 박스에서 표시
+  renderStatusBox();
 
   var order = data.order || Object.keys(data.flights || {});
   var html = "";
   order.forEach(function(fno) {
     var f = data.flights && data.flights[fno];
     if (!f) return;
-    var badge = f.badge || { state: "check", kind: "checking" };
-    var bcls = { good: "b-good", warn: "b-warn", crit: "b-crit", check: "b-check" }[badge.state] || "b-check";
     var route = LANG === "ko" ? f.route : f.route_en;
     var note = LANG === "ko" ? f.note : f.note_en;
     var tempTag = f.temp ? "<span class='temp-tag'>" + (LANG === "ko" ? "임시편" : "TEMP") + "</span> " : "";
@@ -585,7 +549,6 @@ function render() {
     html += "<div class='card'>" +
       "<div class='fno'>" + tempTag + esc(fno) + "</div>" +
       "<div class='route'>" + esc(route) + " · " + esc(note) + "</div>" +
-      "<div class='badgerow'><span class='badge " + bcls + "'><span class='dot'></span>" + esc(badgeLabel(badge)) + "</span></div>" +
       "<div class='tablewrap'><table><thead><tr><th>" + t().th[0] + "</th><th>" + esc(labels.dep) + "</th><th>" +
       esc(labels.arr) + "</th><th>" + t().th[1] + "</th></tr></thead><tbody>" + rows + "</tbody></table></div>" +
       "<div class='links'>" +

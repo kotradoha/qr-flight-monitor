@@ -182,52 +182,56 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
     confirmed_any = False
     net_error = False
 
-    # 매일 운항이면 향후 1주, 비정기(예: QR862 목요일)면 2주 범위에서 해당 요일만 표시
-    hi = 7 if cfg["daily"] else 15
-    for offset in range(-1, hi):
+    # 카타르항공/FlightStats에서 '검색되는'(개별 편이 확인되는) 날짜만 표시한다.
+    # 조회 가능 범위는 오늘 ±3일. 매일편은 어제~+3일, 비정기(목요일)편은 -3~+3일 중 해당 요일.
+    lo, hi = (-1, 4) if cfg["daily"] else (-3, 4)
+    for offset in range(lo, hi):
         d = today_local + timedelta(days=offset)
-        # 비정기편은 운항 요일(QR862=목요일)만 남긴다
-        if not cfg["daily"] and d.weekday() != 3:
+        if not cfg["daily"] and d.weekday() != 3:   # 비정기편은 운항 요일(목)만
             continue
         entry = {
             "date": d.isoformat(),
             "label": f"{d.month}/{d.day} ({DOW_KR[d.weekday()]})",
             "label_en": f"{DOW_EN[d.weekday()]} {d.month}/{d.day}",
             "dep": cfg["sched_dep"], "arr": cfg["sched_arr"],
-            "kind": "plan" if cfg["daily"] else "checking",
-            "cls": "plan", "delay": 0, "confirmed": False,
+            "kind": "checking", "cls": "plan", "delay": 0, "confirmed": False,
         }
-        if -1 <= offset <= 3:   # FlightStats 개별 편 조회 가능 범위(오늘 ±3일)
-            try:
-                fs = fetch_flight(num, d)
-                health["ok"] += 1
-            except FetchError:
-                fs = None
-                health["err"] += 1
-                net_error = True
-                # 조회 실패: '미운항'으로 단정하지 않고 '확인 중'으로 둔다
-                entry["kind"], entry["cls"] = "checking", "plan"
-            else:
-                if fs:
-                    dep_t = to_local(fs["dep_est_utc"], tz) or to_local(fs["dep_sched_utc"], tz)
-                    arr_t = to_local(fs["arr_est_utc"], arr_tz) or to_local(fs["arr_sched_utc"], arr_tz)
-                    entry["dep"] = dep_t or cfg["sched_dep"]
-                    entry["arr"] = arr_t or cfg["sched_arr"]
-                    result = classify(fs, entry, fno, offset, d, alerts)
-                    confirmed_any = True
-                    if offset >= 0 and result is not None:
-                        if isinstance(result, tuple):
-                            badge = {"state": "warn", "kind": "delayed", "delay": result[1]}
-                        elif result == "cancelled":
-                            badge = {"state": "crit", "kind": "cancelled"}
-                        elif result == "diverted":
-                            badge = {"state": "crit", "kind": "diverted"}
-                elif not cfg["daily"]:
-                    entry["kind"], entry["cls"] = "no_service", "plan"
-                    entry["dep"] = entry["arr"] = "—"
-        if offset == -1 and not entry["confirmed"]:
-            continue
-        days.append(entry)
+        try:
+            fs = fetch_flight(num, d)      # 범위가 ±3 이내라 항상 조회
+            health["ok"] += 1
+        except FetchError:
+            fs = None
+            health["err"] += 1
+            net_error = True
+        else:
+            if fs:
+                dep_t = to_local(fs["dep_est_utc"], tz) or to_local(fs["dep_sched_utc"], tz)
+                arr_t = to_local(fs["arr_est_utc"], arr_tz) or to_local(fs["arr_sched_utc"], arr_tz)
+                entry["dep"] = dep_t or cfg["sched_dep"]
+                entry["arr"] = arr_t or cfg["sched_arr"]
+                result = classify(fs, entry, fno, offset, d, alerts)
+                confirmed_any = True
+                if offset >= 0 and result is not None:
+                    if isinstance(result, tuple):
+                        badge = {"state": "warn", "kind": "delayed", "delay": result[1]}
+                    elif result == "cancelled":
+                        badge = {"state": "crit", "kind": "cancelled"}
+                    elif result == "diverted":
+                        badge = {"state": "crit", "kind": "diverted"}
+        # '검색되는' 편만 = 확정된 날짜만 남긴다 (스케줄 추정 행은 표시하지 않음)
+        if entry["confirmed"]:
+            days.append(entry)
+
+    # 확정 편이 하나도 없으면(조회 불가 등) 빈 표 대신 안내 한 줄
+    if not days:
+        pd = today_local if cfg["daily"] else today_local + timedelta(days=(3 - today_local.weekday()) % 7)
+        days.append({
+            "date": pd.isoformat(),
+            "label": f"{pd.month}/{pd.day} ({DOW_KR[pd.weekday()]})",
+            "label_en": f"{DOW_EN[pd.weekday()]} {pd.month}/{pd.day}",
+            "dep": cfg["sched_dep"], "arr": cfg["sched_arr"],
+            "kind": "checking", "cls": "plan", "delay": 0, "confirmed": False,
+        })
 
     # 배지 결정: 확정 이상상태 > 확정 정상 > 확인 실패(check) > 정상(추정)
     if badge is None:

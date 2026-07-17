@@ -50,10 +50,6 @@
    "daily": true,
    "note": "매일 운항 · A350-1000",
    "note_en": "Daily · A350-1000",
-   "badge": {
-    "state": "good",
-    "kind": "normal"
-   },
    "days": [
     {
      "date": "2026-07-16",
@@ -109,39 +105,6 @@
      "cls": "good",
      "delay": 0,
      "confirmed": true
-    },
-    {
-     "date": "2026-07-21",
-     "label": "7/21 (화)",
-     "label_en": "Tue 7/21",
-     "dep": "02:20",
-     "arr": "17:05",
-     "kind": "plan",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
-    },
-    {
-     "date": "2026-07-22",
-     "label": "7/22 (수)",
-     "label_en": "Wed 7/22",
-     "dep": "02:20",
-     "arr": "17:05",
-     "kind": "plan",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
-    },
-    {
-     "date": "2026-07-23",
-     "label": "7/23 (목)",
-     "label_en": "Thu 7/23",
-     "dep": "02:20",
-     "arr": "17:05",
-     "kind": "plan",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
     }
    ],
    "position": null,
@@ -163,10 +126,6 @@
    "daily": true,
    "note": "매일 운항 · A350-1000",
    "note_en": "Daily · A350-1000",
-   "badge": {
-    "state": "good",
-    "kind": "normal"
-   },
    "days": [
     {
      "date": "2026-07-17",
@@ -211,50 +170,6 @@
      "cls": "good",
      "delay": 0,
      "confirmed": true
-    },
-    {
-     "date": "2026-07-21",
-     "label": "7/21 (화)",
-     "label_en": "Tue 7/21",
-     "dep": "01:20",
-     "arr": "05:20",
-     "kind": "plan",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
-    },
-    {
-     "date": "2026-07-22",
-     "label": "7/22 (수)",
-     "label_en": "Wed 7/22",
-     "dep": "01:20",
-     "arr": "05:20",
-     "kind": "plan",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
-    },
-    {
-     "date": "2026-07-23",
-     "label": "7/23 (목)",
-     "label_en": "Thu 7/23",
-     "dep": "01:20",
-     "arr": "05:20",
-     "kind": "plan",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
-    },
-    {
-     "date": "2026-07-24",
-     "label": "7/24 (금)",
-     "label_en": "Fri 7/24",
-     "dep": "01:20",
-     "arr": "05:20",
-     "kind": "plan",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
     }
    ],
    "position": null,
@@ -276,10 +191,6 @@
    "daily": false,
    "note": "비정기 운항 (최근 목요일 위주) · 스케줄에 없는 날은 결항 아님",
    "note_en": "Not daily (recently Thursdays) · absence from schedule is not a cancellation",
-   "badge": {
-    "state": "good",
-    "kind": "normal"
-   },
    "days": [
     {
      "date": "2026-07-16",
@@ -291,17 +202,6 @@
      "cls": "good",
      "delay": 11,
      "confirmed": true
-    },
-    {
-     "date": "2026-07-23",
-     "label": "7/23 (목)",
-     "label_en": "Thu 7/23",
-     "dep": "19:45",
-     "arr": "익일 10:30",
-     "kind": "checking",
-     "cls": "plan",
-     "delay": 0,
-     "confirmed": false
     }
    ],
    "position": null,
