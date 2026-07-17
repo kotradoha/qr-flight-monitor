@@ -16,6 +16,7 @@
     --good: #0ca30c; --warning: #fab219; --critical: #d03b3b;
     --good-text: #006300; --crit-text: #b4211f; --accent: #2a78d6;
     --banner-bg: #fdf6e3; --good-bg: #eaf6ea; --crit-bg: #fbeceb; --note-bg: #fbeceb;
+    --warn-bg: #fdf1dd; --warn-text: #9a6300;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -25,6 +26,7 @@
       --hairline: #2c2c2a; --border: rgba(255,255,255,0.10);
       --good-text: #0ca30c; --crit-text: #ff6b6a; --accent: #3987e5;
       --banner-bg: #26221a; --good-bg: #14261a; --crit-bg: #2a1615; --note-bg: #2a1615;
+      --warn-bg: #2a2113; --warn-text: #f0aa2e;
     }
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,25 +35,28 @@
   .wrap { max-width: 880px; margin: 0 auto; }
 
   .airstrip { display: flex; align-items: flex-start; gap: 12px; border-radius: 12px;
-    padding: 14px 18px; border: 1px solid var(--border); margin-bottom: 18px; }
+    padding: 14px 18px; border: 1px solid var(--border); margin-top: 16px; }
   .airstrip.open { background: var(--good-bg); }
+  .airstrip.caution { background: var(--warn-bg); }
   .airstrip.closed { background: var(--crit-bg); }
   .airstrip.unknown { background: var(--banner-bg); }
   .airstrip .astatus { width: 14px; height: 14px; border-radius: 50%; flex: none; margin-top: 3px;
     box-shadow: 0 0 0 4px rgba(0,0,0,0.04); }
   .airstrip.open .astatus { background: var(--good); }
+  .airstrip.caution .astatus { background: var(--warning); }
   .airstrip.closed .astatus { background: var(--critical); animation: pulse 1.4s ease-in-out infinite; }
   .airstrip.unknown .astatus { background: var(--text-muted); }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
   .atitle { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; }
   .airstrip.open .atitle { color: var(--good-text); }
+  .airstrip.caution .atitle { color: var(--warn-text); }
   .airstrip.closed .atitle { color: var(--crit-text); }
   .asub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.5; }
   .asrc { font-size: 11.5px; margin-top: 5px; color: var(--text-muted); }
   .asrc a { color: var(--accent); text-decoration: none; }
   .asrc a:hover { text-decoration: underline; }
 
-  .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .langrow { display: flex; justify-content: flex-end; }
   h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
   .lang { display: flex; gap: 4px; border: 1px solid var(--hairline); border-radius: 8px; padding: 2px; }
   .lang button { font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 12px;
@@ -160,6 +165,19 @@
 </head>
 <body>
   <div class="wrap">
+    <div class="langrow">
+      <div class="lang">
+        <button id="langKo" class="on" onclick="setLang('ko')">한국어</button>
+        <button id="langEn" onclick="setLang('en')">English</button>
+      </div>
+    </div>
+
+    <h1 data-i18n="title"></h1>
+    <div class="sub" data-i18n="subtitle"></div>
+    <div class="updated" id="updated"></div>
+    <div class="stale" id="staleNote"></div>
+    <div id="loadError" data-i18n="load_error"></div>
+
     <div class="airstrip open" id="airstrip">
       <span class="astatus"></span>
       <div>
@@ -168,20 +186,6 @@
         <div class="asrc" id="airSrc"></div>
       </div>
     </div>
-
-    <div class="topbar">
-      <div>
-        <h1 data-i18n="title"></h1>
-        <div class="sub" data-i18n="subtitle"></div>
-      </div>
-      <div class="lang">
-        <button id="langKo" class="on" onclick="setLang('ko')">한국어</button>
-        <button id="langEn" onclick="setLang('en')">English</button>
-      </div>
-    </div>
-    <div class="updated" id="updated"></div>
-    <div class="stale" id="staleNote"></div>
-    <div id="loadError" data-i18n="load_error"></div>
 
     <div class="banner" id="banner" style="display:none">
       <h2><span class="dot"></span><span id="bannerTitle"></span></h2>
@@ -192,13 +196,6 @@
     <div class="map-note" id="mapNote" data-i18n="map_note"></div>
 
     <div class="cards" id="cards"></div>
-
-    <!-- 상황별 표기 예시 -->
-    <div class="section">
-      <h2 data-i18n="ex_title"></h2>
-      <p data-i18n="ex_desc"></p>
-      <div class="bubbles" id="exampleList"></div>
-    </div>
 
     <div class="footer">
       <span data-i18n="foot_sources"></span><br>
@@ -223,17 +220,21 @@ var QR_ALERTS_URL = "https://www.qatarairways.com/en/travel-alerts.html";
 var I18N = {
   ko: {
     title: "카타르항공 도하 ↔ 인천 운항 모니터링 대시보드",
-    subtitle: "QR858 · QR862 (도하→인천) · QR859 (인천→도하) — 중동 정세 관련 한국 노선 영공폐쇄·지연·결항 상시 모니터링 · 매시간 자동 갱신",
+    subtitle: "카타르항공 도하-인천 노선(QR858·QR862·QR859)의 지연·결항과 카타르 영공 상황을 한 시간마다 자동으로 확인해 알려드립니다. 여행·귀국 계획에 참고하세요.",
     updated: function(d){ return "마지막 확인: " + d.generated_at_doha + " (도하) / " + d.generated_at_seoul + " (인천)"; },
     stale_note: "⚠ 실시간 운항 데이터 갱신이 지연되고 있습니다. 아래 상태는 정기 스케줄 기준이며, 최신 상태는 각 항공편의 Flightradar24·FlightStats·카타르항공 공식 링크에서 확인해 주세요.",
     load_error: "데이터를 불러오지 못했습니다. 잠시 후 새로고침해 주세요.",
-    air_open_title: "카타르 영공 · 정상 운영 중",
-    air_open_sub: function(risk){ return "도하 하마드 국제공항 영공이 정상적으로 운영되고 있으며, 인천 노선도 정상 운항 중입니다" +
-      (risk ? ". 현재 국제 권고 등급은 " + risk + "단계로, 권고는 발효 중이지만 영공이 폐쇄된 것은 아닙니다" : "") + "."; },
-    air_unknown_title: "카타르 영공 · 상태 확인 중",
-    air_unknown_sub: "영공 상태 정보를 일시적으로 불러오지 못했습니다. 아래 출처 링크에서 직접 확인해 주세요.",
-    air_closed_title: "⚠ 카타르 영공 폐쇄 — 운항 차질 발생 가능",
-    air_closed_sub: "카타르(도하 하마드) 영공 폐쇄가 감지되었습니다. 인천 노선 결항·회항·지연 가능성이 높습니다. 카타르항공 공식 채널을 반드시 확인하세요.",
+    air_open_title: "🟢 카타르 영공 · 정상 운영 중",
+    air_open_sub: function(risk){ return "지금 카타르(도하 하마드) 영공은 정상적으로 열려 있고, 인천 노선도 평소대로 운항하고 있어요" +
+      (risk ? ". 참고로 국제 권고 등급은 " + risk + "단계지만, 영공이 닫힌 것은 아닙니다" : "") + "."; },
+    air_caution_title: "🟠 카타르 영공 · 폐쇄 가능성 있음 (예상)",
+    air_caution_sub: function(risk){ return "카타르 영공에 대한 회피 권고가 내려져 있어, 앞으로 영공이 닫힐 가능성이 있습니다(예상). " +
+      "다만 지금은 인천 노선이 정상적으로 운항 중이며, 실제로 폐쇄되면 이 박스가 빨간색으로 바뀝니다" +
+      (risk ? " (국제 권고 등급 " + risk + "단계)" : "") + "."; },
+    air_unknown_title: "⚪ 카타르 영공 · 상태 확인 중",
+    air_unknown_sub: "영공 상태 정보를 잠시 불러오지 못했어요. 아래 출처 링크에서 직접 확인해 주세요.",
+    air_closed_title: "🔴 카타르 영공 폐쇄 (확정) — 운항 차질",
+    air_closed_sub: "카타르(도하 하마드) 영공이 폐쇄된 것으로 확인됩니다. 인천 노선의 결항·회항·지연 가능성이 높으니, 예약하신 편은 카타르항공 공식 채널에서 꼭 확인해 주세요.",
     air_src: function(){ return "근거: <a href='" + SAFE_URL + "' target='_blank' rel='noopener'>SafeAirspace 영공 권고(EASA·NOTAM 종합)</a> · 공식 확인: " +
       "<a href='" + QR_ALERTS_URL + "' target='_blank' rel='noopener'>카타르항공 여행경보</a> · " +
       "<a href='" + HAMAD_URL + "' target='_blank' rel='noopener'>하마드국제공항</a>"; },
@@ -272,17 +273,21 @@ var I18N = {
   },
   en: {
     title: "Qatar Airways Doha ↔ Incheon Flight Monitoring Dashboard",
-    subtitle: "QR858 · QR862 (DOH→ICN) · QR859 (ICN→DOH) — continuous monitoring of airspace closures, delays & cancellations on the Korea route · auto-updated hourly",
+    subtitle: "We automatically check Qatar Airways' Doha–Incheon flights (QR858·QR862·QR859) and Qatar airspace status every hour — handy for planning your trip or return home.",
     updated: function(d){ return "Last checked: " + d.generated_at_doha + " (Doha) / " + d.generated_at_seoul + " (Incheon)"; },
     stale_note: "⚠ Live flight data is delayed. The statuses below are based on the regular schedule; for the latest status use each flight's Flightradar24 / FlightStats / Qatar Airways links.",
     load_error: "Failed to load data. Please refresh in a moment.",
-    air_open_title: "Qatar airspace · Open / operating normally",
-    air_open_sub: function(risk){ return "Doha Hamad International Airport airspace is operating normally, and the Incheon route is running on schedule" +
-      (risk ? ". The current international advisory level is " + risk + " — an advisory is in effect, but the airspace is not closed" : "") + "."; },
-    air_unknown_title: "Qatar airspace · Status unavailable",
-    air_unknown_sub: "Airspace status could not be loaded at the moment. Please check the source links below directly.",
-    air_closed_title: "⚠ Qatar airspace CLOSED — disruptions likely",
-    air_closed_sub: "A closure of Qatari (Doha Hamad) airspace has been detected. Cancellations, diversions or delays on the Incheon route are likely. Please check official Qatar Airways channels.",
+    air_open_title: "🟢 Qatar airspace · Open / operating normally",
+    air_open_sub: function(risk){ return "Right now Qatari (Doha Hamad) airspace is open and the Incheon route is running as usual" +
+      (risk ? ". For reference, the international advisory level is " + risk + ", but the airspace is not closed" : "") + "."; },
+    air_caution_title: "🟠 Qatar airspace · Possible closure (expected)",
+    air_caution_sub: function(risk){ return "Advisories to avoid Qatari airspace are in effect, so the airspace could close in the coming period (expected). " +
+      "For now the Incheon route is operating normally; if it actually closes, this box turns red" +
+      (risk ? " (advisory level " + risk + ")" : "") + "."; },
+    air_unknown_title: "⚪ Qatar airspace · Status unavailable",
+    air_unknown_sub: "Airspace status could not be loaded just now. Please check the source links below directly.",
+    air_closed_title: "🔴 Qatar airspace CLOSED — disruptions",
+    air_closed_sub: "Qatari (Doha Hamad) airspace appears to be closed. Cancellations, diversions or delays on the Incheon route are likely — please confirm your booking via official Qatar Airways channels.",
     air_src: function(){ return "Basis: <a href='" + SAFE_URL + "' target='_blank' rel='noopener'>SafeAirspace advisory (EASA/NOTAM aggregate)</a> · Verify: " +
       "<a href='" + QR_ALERTS_URL + "' target='_blank' rel='noopener'>Qatar Airways travel alerts</a> · " +
       "<a href='" + HAMAD_URL + "' target='_blank' rel='noopener'>Hamad Intl Airport</a>"; },
@@ -337,10 +342,6 @@ function applyStatic() {
   document.getElementById("footNotice").innerHTML = t().foot_notice;
   document.getElementById("langKo").className = LANG === "ko" ? "on" : "";
   document.getElementById("langEn").className = LANG === "en" ? "on" : "";
-  document.getElementById("exampleList").innerHTML = t().examples.map(function(e){
-    return "<div class='bubble " + e.type + "'><div class='bt'>" + esc(e.t) +
-      "</div><div class='bd'>" + esc(e.d).replace(/\n/g, "<br>") + "</div></div>";
-  }).join("");
 }
 
 function kindLabel(d) {
@@ -379,15 +380,29 @@ function closureDetailLines(d) {
   return lines;
 }
 
+function advisoryLines(d) {
+  var a = d.airspace || {};
+  return (a.advisories || []).map(function(x){
+    return esc(x.code) + (x.valid_until ? (LANG === "ko" ? " (유효 ~" + esc(x.valid_until) + ")" : " (valid until " + esc(x.valid_until) + ")") : "");
+  });
+}
+
 function renderAirstrip() {
   var strip = document.getElementById("airstrip");
   var a = (DATA && DATA.airspace) || {};
+  var level = a.level || (a.closed ? "closed" : (a.ok === false ? "unknown" : "open"));
   var sub = document.getElementById("airSub");
-  if (a.closed) {
+  if (level === "closed") {
     strip.className = "airstrip closed";
     document.getElementById("airTitle").textContent = t().air_closed_title;
     sub.innerHTML = t().air_closed_sub + "<br>" + closureDetailLines(DATA).join("<br>");
-  } else if (a.ok === false || a.status === "unknown") {
+  } else if (level === "caution") {
+    strip.className = "airstrip caution";
+    document.getElementById("airTitle").textContent = t().air_caution_title;
+    var adv = advisoryLines(DATA);
+    sub.innerHTML = t().air_caution_sub(a.risk_level ? esc(a.risk_level) : "") +
+      (adv.length ? "<br>" + (LANG === "ko" ? "근거 권고: " : "Advisories: ") + adv.join(", ") : "");
+  } else if (level === "unknown") {
     strip.className = "airstrip unknown";
     document.getElementById("airTitle").textContent = t().air_unknown_title;
     sub.textContent = t().air_unknown_sub;
@@ -425,16 +440,16 @@ function render() {
     var bodyHtml = t().banner_alert_body;
     if (closed) bodyHtml += "<br><br>" + closureDetailLines(data).join("<br>");
     document.getElementById("bannerBody").innerHTML = bodyHtml;
+    banner.style.display = "";
   } else if (data.degraded) {
     banner.className = "banner";
     document.getElementById("bannerTitle").textContent = t().banner_degraded_title;
     document.getElementById("bannerBody").innerHTML = t().banner_degraded_body;
+    banner.style.display = "";
   } else {
-    banner.className = "banner";
-    document.getElementById("bannerTitle").textContent = t().banner_ok_title;
-    document.getElementById("bannerBody").innerHTML = t().banner_ok_body(risk ? esc(risk) : "");
+    // 이상 없음 — 영공 박스와 항공편 카드로 상태가 충분히 표시되므로 배너는 숨김
+    banner.style.display = "none";
   }
-  banner.style.display = "";
 
   var order = data.order || Object.keys(data.flights || {});
   var html = "";

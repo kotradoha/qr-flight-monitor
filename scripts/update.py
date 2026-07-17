@@ -182,8 +182,13 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
     confirmed_any = False
     net_error = False
 
-    for offset in range(-1, 7):
+    # 매일 운항이면 향후 1주, 비정기(예: QR862 목요일)면 2주 범위에서 해당 요일만 표시
+    hi = 7 if cfg["daily"] else 15
+    for offset in range(-1, hi):
         d = today_local + timedelta(days=offset)
+        # 비정기편은 운항 요일(QR862=목요일)만 남긴다
+        if not cfg["daily"] and d.weekday() != 3:
+            continue
         entry = {
             "date": d.isoformat(),
             "label": f"{d.month}/{d.day} ({DOW_KR[d.weekday()]})",
@@ -378,7 +383,7 @@ def fetch_airspace(prev):
             r"suspend(ed)?\s+all\s+flight|no\s+overflight", low))
         return {
             "risk_level": m.group(1).strip() if m else None,
-            "closed": closed, "status": "closed" if closed else "open",
+            "keyword_closed": closed,      # 폐쇄 '가능성' 신호 (레벨 판정은 main에서 운항현실과 종합)
             "advisories": parse_advisories(text),
             "source": "https://safeairspace.net/qatar/",
             "checked_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -386,7 +391,7 @@ def fetch_airspace(prev):
         }
     except Exception as e:  # noqa: BLE001
         print(f"[warn] airspace fetch failed: {e}", file=sys.stderr)
-        old = (prev or {}).get("airspace") or {"closed": False, "status": "unknown"}
+        old = (prev or {}).get("airspace") or {"level": "unknown"}
         old["ok"] = False
         return old
 
@@ -427,29 +432,28 @@ def main():
 
     airspace = fetch_airspace(prev)
 
-    # 영공 '폐쇄' 오탐 방지: 실제 항공편이 정상 운항 중이면 폐쇄로 단정하지 않는다.
-    # (SafeAirspace 과거 서술문 등 키워드 오매칭 대비 — 운항 현실을 최종 판정 근거로 삼음)
+    # 영공 상태 레벨 판정: open(정상·초록) / caution(폐쇄 가능·예상·주황) / closed(폐쇄 확정·빨강)
+    # 판정 근거는 '운항 현실'을 최우선으로 삼아 서술문 키워드 오탐을 방지한다.
     doha_today = now_utc.astimezone(TZ_DOHA).date()
     today_iso, tom_iso = doha_today.isoformat(), (doha_today + timedelta(days=1)).isoformat()
-    normal_ops = False
     cancel_recent = 0
     for fno in FLIGHTS:
         for day in (flights_out.get(fno) or {}).get("days", []):
-            if not day.get("confirmed") or day.get("date", "") < today_iso:
-                continue
-            if day.get("kind") in ("sched", "inflight", "landed"):
-                normal_ops = True
-            if day.get("kind") in ("cancelled", "diverted") and day.get("date") in (today_iso, tom_iso):
+            if day.get("confirmed") and day.get("kind") in ("cancelled", "diverted") \
+                    and day.get("date") in (today_iso, tom_iso):
                 cancel_recent += 1
-    if airspace.get("closed") and normal_ops and cancel_recent < 2:
-        airspace["closed"] = False
-        airspace["status"] = "advisory"
-        airspace["closed_suppressed"] = True
-        print("[info] airspace 'closed' 키워드 감지됐으나 정상 운항 확인 → 폐쇄 보류", file=sys.stderr)
-    # 운항 현실로 폐쇄 확증(다수 결항/회항)
-    if cancel_recent >= 2:
-        airspace["closed"] = True
-        airspace["status"] = "closed"
+
+    if not airspace.get("ok"):
+        level = "unknown"
+    elif cancel_recent >= 2:
+        level = "closed"    # 오늘·내일 다수 결항/회항 → 사실상 폐쇄 확정
+    elif airspace.get("keyword_closed") or airspace.get("advisories") or cancel_recent >= 1:
+        level = "caution"   # 회피 권고 발효 또는 일부 차질 → 폐쇄 가능성(예상)
+    else:
+        level = "open"      # 특이 신호 없음 → 정상
+    airspace["level"] = level
+    airspace["closed"] = (level == "closed")
+    airspace["status"] = level
 
     # 열화 판정: 실시간 확인이 하나도 안 됐고 조회 오류가 있었으면 degraded
     degraded = (confirmed_total == 0 and health["err"] > 0)
