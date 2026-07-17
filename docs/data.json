@@ -4,20 +4,17 @@
  "generated_at_seoul": "2026-07-18 04:57",
  "airspace": {
   "risk_level": "Three",
-  "closed": true,
-  "status": "closed",
+  "closed": false,
+  "status": "advisory",
+  "closed_suppressed": true,
   "advisories": [
    {
-    "code": "ued Valid to France Notam LFFF F1553/26",
-    "valid_until": null
-   },
-   {
     "code": "EASA CZIB 2026-07",
-    "valid_until": null
+    "valid_until": "July 29, 2026"
    },
    {
-    "code": "Notam LFFF F1553/26",
-    "valid_until": null
+    "code": "France NOTAM F1553/26",
+    "valid_until": "July 22, 2026"
    }
   ],
   "source": "https://safeairspace.net/qatar/",

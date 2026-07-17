@@ -327,26 +327,43 @@ def discover_extra_flights(now_utc, alerts, health):
     return found
 
 
+def _find_valid_until(text, pos):
+    """pos 이후 220자 창에서 유효기간 문구를 찾는다."""
+    win = text[pos:pos + 220]
+    m = re.search(
+        r"valid\s+(?:through|until|to)\s+"
+        r"([A-Za-z]+\s+\d{1,2},?\s*\d{4}|\d{1,2}\s+[A-Za-z]+\s+\d{4}|\d{4}-\d{2}-\d{2})",
+        win, re.IGNORECASE)
+    return m.group(1).strip() if m else None
+
+
 def parse_advisories(text):
-    """SafeAirspace 본문에서 권고 코드(CZIB/NOTAM)와 유효기간을 추출."""
+    """SafeAirspace 본문에서 권고 코드(CZIB/NOTAM)와 유효기간을 추출.
+    서술문 오매칭을 막기 위해 접두 기관명은 단일 대문자 단어로 제한한다."""
     advisories = []
-    code_re = re.compile(
-        r"((?:EASA\s+CZIB\s*[0-9\-]+)|(?:[A-Za-z ]{0,20}?NOTAM\s+[A-Z]{0,4}\s?[A-Z]?[0-9]{2,4}/[0-9]{2}))",
-        re.IGNORECASE)
-    date_re = re.compile(
-        r"valid\s+(?:through|until|to)\s+([A-Za-z]+\s+\d{1,2},?\s*\d{4}|\d{1,2}\s+[A-Za-z]+\s+\d{4})",
-        re.IGNORECASE)
     seen = set()
-    for m in code_re.finditer(text):
-        code = re.sub(r"\s+", " ", m.group(1)).strip(" .,")
-        if code.lower() in seen or len(code) < 5:
+    # EASA CZIB
+    for m in re.finditer(r"EASA\s+CZIB\s*([0-9]{4}-[0-9]{1,3}|[0-9]{2,}[0-9\-/]*)", text, re.IGNORECASE):
+        code = re.sub(r"\s+", " ", m.group(0)).strip(" .,")
+        key = code.lower()
+        if key in seen:
             continue
-        seen.add(code.lower())
-        dm = date_re.search(text[m.end():m.end() + 220])
-        advisories.append({"code": code, "valid_until": dm.group(1).strip() if dm else None})
+        seen.add(key)
+        advisories.append({"code": code, "valid_until": _find_valid_until(text, m.end())})
+    # NOTAM: (선택) 단일 기관 대문자 단어 + NOTAM + 식별자
+    for m in re.finditer(
+            r"(?:([A-Z][A-Za-z]{1,15})\s+)?NOTAM\s+([A-Z]{0,4}\s?[A-Z]?[0-9]{2,4}/[0-9]{2})", text):
+        num = re.sub(r"\s+", " ", m.group(2)).strip()
+        key = "notam:" + num.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        auth = (m.group(1) + " ") if m.group(1) else ""
+        advisories.append({"code": (auth + "NOTAM " + num).strip(),
+                           "valid_until": _find_valid_until(text, m.end())})
         if len(advisories) >= 6:
             break
-    return advisories
+    return advisories[:6]
 
 
 def fetch_airspace(prev):
@@ -409,6 +426,30 @@ def main():
     order = core_order + sorted(extra.keys())
 
     airspace = fetch_airspace(prev)
+
+    # 영공 '폐쇄' 오탐 방지: 실제 항공편이 정상 운항 중이면 폐쇄로 단정하지 않는다.
+    # (SafeAirspace 과거 서술문 등 키워드 오매칭 대비 — 운항 현실을 최종 판정 근거로 삼음)
+    doha_today = now_utc.astimezone(TZ_DOHA).date()
+    today_iso, tom_iso = doha_today.isoformat(), (doha_today + timedelta(days=1)).isoformat()
+    normal_ops = False
+    cancel_recent = 0
+    for fno in FLIGHTS:
+        for day in (flights_out.get(fno) or {}).get("days", []):
+            if not day.get("confirmed") or day.get("date", "") < today_iso:
+                continue
+            if day.get("kind") in ("sched", "inflight", "landed"):
+                normal_ops = True
+            if day.get("kind") in ("cancelled", "diverted") and day.get("date") in (today_iso, tom_iso):
+                cancel_recent += 1
+    if airspace.get("closed") and normal_ops and cancel_recent < 2:
+        airspace["closed"] = False
+        airspace["status"] = "advisory"
+        airspace["closed_suppressed"] = True
+        print("[info] airspace 'closed' 키워드 감지됐으나 정상 운항 확인 → 폐쇄 보류", file=sys.stderr)
+    # 운항 현실로 폐쇄 확증(다수 결항/회항)
+    if cancel_recent >= 2:
+        airspace["closed"] = True
+        airspace["status"] = "closed"
 
     # 열화 판정: 실시간 확인이 하나도 안 됐고 조회 오류가 있었으면 degraded
     degraded = (confirmed_total == 0 and health["err"] > 0)
