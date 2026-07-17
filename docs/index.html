@@ -200,7 +200,6 @@
     <div class="statusbox open" id="statusBox">
       <div class="sb-title" id="sbTitle"></div>
       <div class="sb-body" id="sbBody"></div>
-      <div class="sb-links" id="sbLinks"></div>
     </div>
 
     <div class="cards" id="cards"></div>
@@ -507,12 +506,6 @@ function renderStatusBox() {
       "' target='_blank' rel='noopener' style='color:inherit;text-decoration:underline'>" + esc(title) + "</a>");
   });
   document.getElementById("sbBody").innerHTML = lines.join("<br>");
-
-  // 공식 확인 링크 (항상 제공)
-  document.getElementById("sbLinks").innerHTML =
-    "<a href='https://www.qatarairways.com/en/travel-alerts.html' target='_blank' rel='noopener'>" + t().travel_qr + " →</a>" +
-    "<a href='https://dohahamadairport.com/airlines/flight-status' target='_blank' rel='noopener'>" + t().travel_hamad + " →</a>" +
-    "<a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace →</a>";
 }
 
 function render() {
