@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카타르항공 도하↔인천 운항 모니터 | Qatar Airways DOH↔ICN Flight Monitor</title>
+<meta name="description" content="카타르항공 QR858·QR862·QR859 도하-인천 노선 지연·결항 상시 모니터링 (매시간 자동 갱신) / Qatar Airways Doha-Incheon route disruption monitor">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1: #fcfcfb; --page: #f9f9f7;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #898781;
+    --hairline: #e1e0d9; --border: rgba(11,11,11,0.10);
+    --good: #0ca30c; --warning: #fab219; --critical: #d03b3b;
+    --good-text: #006300; --accent: #2a78d6; --banner-bg: #fdf6e3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --surface-1: #1a1a19; --page: #0d0d0d;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7;
+      --hairline: #2c2c2a; --border: rgba(255,255,255,0.10);
+      --good-text: #0ca30c; --accent: #3987e5; --banner-bg: #26221a;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+         background: var(--page); color: var(--text-primary); padding: 28px 20px 40px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .lang { display: flex; gap: 4px; border: 1px solid var(--hairline); border-radius: 8px; padding: 2px; }
+  .lang button { font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 12px;
+    border: none; border-radius: 6px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .lang button.on { background: var(--accent); color: #fff; }
+  .sub { color: var(--text-secondary); font-size: 13px; margin-top: 4px; line-height: 1.5; }
+  .updated { color: var(--text-muted); font-size: 12px; margin-top: 8px; }
+  .banner { margin-top: 18px; border: 1px solid var(--border); border-radius: 12px;
+            background: var(--banner-bg); padding: 14px 16px; }
+  .banner h2 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .banner .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--warning); flex: none; }
+  .banner.crit .dot { background: var(--critical); }
+  .banner p { font-size: 12.5px; color: var(--text-secondary); margin-top: 8px; line-height: 1.65; }
+  .banner b { color: var(--text-primary); }
+  #map { height: 300px; border-radius: 12px; border: 1px solid var(--border); margin-top: 16px; display: none; }
+  .map-note { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; display: none; }
+  .cards { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 16px; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 18px 18px 16px; }
+  .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .fno { font-size: 16px; font-weight: 700; }
+  .route { color: var(--text-secondary); font-size: 13px; margin-top: 2px; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+           padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
+  .badge .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .b-good { color: var(--good-text); } .b-good .dot { background: var(--good); }
+  .b-warn { color: var(--text-primary); } .b-warn .dot { background: var(--warning); }
+  .b-crit { color: var(--critical); } .b-crit .dot { background: var(--critical); }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 12.5px; }
+  th { text-align: left; font-weight: 600; font-size: 11px; color: var(--text-muted);
+       text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 8px; border-bottom: 1px solid var(--hairline); }
+  td { padding: 6px 8px; border-bottom: 1px solid var(--hairline); color: var(--text-secondary);
+       font-variant-numeric: tabular-nums; }
+  td:first-child { color: var(--text-primary); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  .st-good { color: var(--good-text); font-weight: 600; }
+  .st-plan { color: var(--text-secondary); }
+  .st-warn { color: var(--text-primary); font-weight: 600; }
+  .st-crit { color: var(--critical); font-weight: 600; }
+  .links { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .links a { color: var(--accent); font-size: 12.5px; text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+  .subscribe { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+               padding: 18px; margin-top: 16px; }
+  .subscribe h2 { font-size: 15px; font-weight: 700; }
+  .subscribe p { font-size: 12.5px; color: var(--text-secondary); margin-top: 6px; line-height: 1.55; }
+  .form-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .form-row input, .form-row select { font: inherit; font-size: 13px; padding: 9px 12px;
+    border: 1px solid var(--hairline); border-radius: 8px; background: var(--page);
+    color: var(--text-primary); min-width: 0; }
+  .form-row input { flex: 1 1 220px; }
+  .form-row button { font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px;
+    border: none; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; }
+  .form-msg { font-size: 12.5px; margin-top: 8px; color: var(--good-text); display: none; }
+  .footer { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--hairline);
+            font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+  .footer b { color: var(--text-primary); }
+  .footer a { color: var(--accent); }
+  .counter { margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+  .counter img { height: 18px; }
+  #loadError { display: none; margin-top: 16px; font-size: 13px; color: var(--critical); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1 data-i18n="title"></h1>
+        <div class="sub" data-i18n="subtitle"></div>
+      </div>
+      <div class="lang">
+        <button id="langKo" class="on" onclick="setLang('ko')">한국어</button>
+        <button id="langEn" onclick="setLang('en')">English</button>
+      </div>
+    </div>
+    <div class="updated" id="updated"></div>
+    <div id="loadError" data-i18n="load_error"></div>
+
+    <div class="banner" id="banner" style="display:none">
+      <h2><span class="dot"></span><span id="bannerTitle"></span></h2>
+      <p id="bannerBody"></p>
+    </div>
+
+    <div id="map"></div>
+    <div class="map-note" id="mapNote" data-i18n="map_note"></div>
+
+    <div class="cards" id="cards"></div>
+
+    <div class="subscribe">
+      <h2 data-i18n="sub_title"></h2>
+      <p data-i18n="sub_desc"></p>
+      <form id="subForm" action="https://formsubmit.co/ggamjjic@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="[QR Flight Monitor] New alert subscription">
+        <input type="hidden" name="_captcha" value="false">
+        <div class="form-row">
+          <select name="type" id="subType">
+            <option value="email" data-i18n="opt_email"></option>
+            <option value="phone" data-i18n="opt_phone"></option>
+          </select>
+          <select name="country_code" id="ccode" style="display:none">
+            <option value="+974">+974</option>
+            <option value="+82">+82</option>
+            <option value="+962">+962</option>
+            <option value="+971">+971</option>
+            <option value="+966">+966</option>
+          </select>
+          <input type="text" name="contact" id="contact" required>
+          <button type="submit" data-i18n="btn_submit"></button>
+        </div>
+      </form>
+      <div class="form-msg" id="formMsg" data-i18n="sub_done"></div>
+    </div>
+
+    <div class="footer">
+      <span data-i18n="foot_sources"></span><br>
+      <span data-i18n="foot_legend"></span><br>
+      <span id="footNotice"></span>
+      <div class="counter">
+        <span data-i18n="visitors"></span>
+        <img id="hitsBadge" alt="visitor count" src="" onerror="this.parentElement.style.display='none'">
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+var LANG = (localStorage_get("qrmon_lang")) || (navigator.language && navigator.language.indexOf("ko") === 0 ? "ko" : "en");
+function localStorage_get(k){ try { return window.localStorage ? localStorage.getItem(k) : null; } catch(e){ return null; } }
+function localStorage_set(k,v){ try { if (window.localStorage) localStorage.setItem(k,v); } catch(e){} }
+
+var I18N = {
+  ko: {
+    title: "카타르항공 도하 ↔ 인천 운항 모니터",
+    subtitle: "QR858 · QR862 (도하→인천) · QR859 (인천→도하) — 중동 정세 관련 한국 노선 운항 차질 상시 모니터링 · 매시간 자동 갱신",
+    updated: function(d){ return "마지막 확인: " + d.generated_at_doha + " (도하) / " + d.generated_at_seoul + " (한국)"; },
+    load_error: "데이터를 불러오지 못했습니다. 잠시 후 새로고침해 주세요.",
+    banner_ok_title: "현재 도하↔인천 노선 정상 운항 중",
+    banner_ok_body: function(risk){ return "이란 관련 무력 충돌로 카타르 영공에 대한 국제 권고가 발효 중입니다" +
+      (risk ? " (SafeAirspace 위험 등급: <b>" + risk + "</b>)" : "") +
+      ". 결항·지연·영공 폐쇄가 감지되면 이 배너가 자동으로 바뀝니다."; },
+    banner_alert_title: "운항 차질 감지",
+    banner_alert_body: "아래 각 항공편 표에서 상세 내용을 확인하세요. 최종 확인은 <b>카타르항공 공식 채널</b>을 이용하시기 바랍니다.",
+    map_note: "항공기 위치: 커뮤니티 ADS-B 데이터(adsb.lol) 기준, 1분마다 갱신. 정밀 추적은 각 카드의 Flightradar24 링크를 이용하세요.",
+    th: ["출발일", "상태"],
+    kinds: { sched: "✓ 운항 예정 · 정시", inflight: "✓ 비행 중", landed: "✓ 도착 완료",
+             cancelled: "✕ 결항", diverted: "⚠ 회항", plan: "스케줄 예정",
+             no_service: "스케줄상 운항 없음", checking: "운항 여부 확인 중" },
+    delayed: function(m){ return "⚠ 지연 " + m + "분"; },
+    badge: { normal: "✓ 정상 운항", inflight: "✓ 비행 중 · 정상", cancelled: "✕ 결항 발생",
+             diverted: "⚠ 회항 발생" },
+    badge_delayed: function(m){ return "⚠ 지연 " + m + "분"; },
+    links: ["실시간 위치 (Flightradar24)", "FlightStats", "카타르항공 공식 조회"],
+    sub_title: "지연·결항 알림 구독 신청",
+    sub_desc: "이메일 주소 또는 전화번호(국가번호 포함)를 남기면 알림 명단에 추가 신청됩니다. 신청 내역은 운영자(무역관)에게 전달되며, 명단 등록 후부터 알림이 발송됩니다.",
+    opt_email: "이메일", opt_phone: "전화번호", btn_submit: "신청",
+    ph_email: "예: name@example.com", ph_phone: "예: 33123456 (숫자만)",
+    sub_done: "신청이 접수되었습니다. 운영자 확인 후 알림이 시작됩니다.",
+    foot_sources: "데이터 출처: Cirium/FlightStats(운항 상태) · 카타르항공 공식 여행 경보 · SafeAirspace(영공 권고) · adsb.lol(실시간 위치) · Flightradar24(위치 추적 링크)",
+    foot_legend: "상태 표기: ✓ 확인됨 / 스케줄 예정 / ⚠ 지연 / ✕ 결항 — \"확인됨\"은 개별 편 데이터가 확인된 날짜(약 ±3일), \"스케줄 예정\"은 정기 스케줄 기준입니다.",
+    foot_notice: "본 페이지는 참고용 모니터링 정보입니다. 항공권 예약·변경 등 최종 확인은 반드시 <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>카타르항공 공식 운항 조회</a> 또는 콜센터에서 하시기 바랍니다.",
+    visitors: "누적 방문:"
+  },
+  en: {
+    title: "Qatar Airways Doha ↔ Incheon Flight Monitor",
+    subtitle: "QR858 · QR862 (DOH→ICN) · QR859 (ICN→DOH) — continuous monitoring of Korea-route disruptions amid Middle East tensions · auto-updated hourly",
+    updated: function(d){ return "Last checked: " + d.generated_at_doha + " (Doha) / " + d.generated_at_seoul + " (Korea)"; },
+    load_error: "Failed to load data. Please refresh in a moment.",
+    banner_ok_title: "Doha↔Incheon flights currently operating normally",
+    banner_ok_body: function(risk){ return "International advisories are in effect for Qatari airspace due to the Iran-related conflict" +
+      (risk ? " (SafeAirspace risk level: <b>" + risk + "</b>)" : "") +
+      ". This banner changes automatically if cancellations, delays, or airspace closures are detected."; },
+    banner_alert_title: "Disruption detected",
+    banner_alert_body: "See the flight tables below for details. Please verify with <b>official Qatar Airways channels</b>.",
+    map_note: "Aircraft positions: community ADS-B data (adsb.lol), refreshed every minute. For precise tracking use the Flightradar24 link on each card.",
+    th: ["Date", "Status"],
+    kinds: { sched: "✓ Scheduled · on time", inflight: "✓ In flight", landed: "✓ Landed",
+             cancelled: "✕ Cancelled", diverted: "⚠ Diverted", plan: "Per schedule",
+             no_service: "No service this day", checking: "To be confirmed" },
+    delayed: function(m){ return "⚠ Delayed " + m + " min"; },
+    badge: { normal: "✓ Operating normally", inflight: "✓ In flight · normal", cancelled: "✕ Cancellation",
+             diverted: "⚠ Diversion" },
+    badge_delayed: function(m){ return "⚠ Delayed " + m + " min"; },
+    links: ["Live position (Flightradar24)", "FlightStats", "Qatar Airways official"],
+    sub_title: "Subscribe to delay/cancellation alerts",
+    sub_desc: "Leave your email or phone number (with country code) to request alerts. Requests go to the operator (KOTRA Doha); alerts begin once you are added to the list.",
+    opt_email: "Email", opt_phone: "Phone", btn_submit: "Submit",
+    ph_email: "e.g. name@example.com", ph_phone: "e.g. 33123456 (digits only)",
+    sub_done: "Request received. Alerts begin after operator confirmation.",
+    foot_sources: "Sources: Cirium/FlightStats (flight status) · Qatar Airways official travel alerts · SafeAirspace (airspace advisories) · adsb.lol (live positions) · Flightradar24 (tracking links)",
+    foot_legend: "Legend: ✓ confirmed / per schedule / ⚠ delayed / ✕ cancelled — \"confirmed\" means per-flight data exists (about ±3 days); \"per schedule\" is based on the regular timetable.",
+    foot_notice: "This page is for reference only. For bookings and final confirmation always use the <a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>official Qatar Airways flight status</a> or call center.",
+    visitors: "Total visits:"
+  }
+};
+
+var DATA = null, map = null, markers = {};
+var CALLSIGNS = { "QR858": "QTR858", "QR859": "QTR859", "QR862": "QTR862" };
+
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+function t() { return I18N[LANG]; }
+
+function applyStatic() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-i18n]").forEach(function(el) {
+    var v = t()[el.getAttribute("data-i18n")];
+    if (typeof v === "string") el.innerHTML = v;
+  });
+  document.getElementById("footNotice").innerHTML = t().foot_notice;
+  document.getElementById("contact").placeholder =
+    document.getElementById("subType").value === "phone" ? t().ph_phone : t().ph_email;
+  document.getElementById("langKo").className = LANG === "ko" ? "on" : "";
+  document.getElementById("langEn").className = LANG === "en" ? "on" : "";
+}
+
+function kindLabel(d) {
+  if (d.kind === "delayed") return t().delayed(d.delay);
+  return t().kinds[d.kind] || d.kind;
+}
+function badgeLabel(b) {
+  if (b.kind === "delayed") return t().badge_delayed(b.delay || 0);
+  return t().badge[b.kind] || t().badge.normal;
+}
+
+function render() {
+  if (!DATA) return;
+  var data = DATA;
+  document.getElementById("updated").textContent = t().updated(data);
+
+  var banner = document.getElementById("banner");
+  var alerts = data.alerts || [];
+  var risk = (data.airspace && data.airspace.risk_level) || null;
+  if (alerts.length > 0) {
+    banner.className = "banner crit";
+    var msgs = alerts.map(function(a) {
+      var base = a.flight + " " + a.date.slice(5).replace("-", "/");
+      if (a.type === "delay") return base + (LANG === "ko" ? " 지연 " + a.minutes + "분" : " delayed " + a.minutes + " min");
+      if (a.type === "cancelled") return base + (LANG === "ko" ? " 결항" : " cancelled");
+      return base + (LANG === "ko" ? " 회항" : " diverted");
+    });
+    document.getElementById("bannerTitle").textContent = t().banner_alert_title + " — " + msgs.join(" · ");
+    document.getElementById("bannerBody").innerHTML = t().banner_alert_body;
+  } else {
+    banner.className = "banner";
+    document.getElementById("bannerTitle").textContent = t().banner_ok_title;
+    document.getElementById("bannerBody").innerHTML = t().banner_ok_body(esc(risk));
+  }
+  banner.style.display = "";
+
+  var order = ["QR858", "QR859", "QR862"];
+  var html = "";
+  order.forEach(function(fno) {
+    var f = data.flights[fno];
+    if (!f) return;
+    var bcls = { good: "b-good", warn: "b-warn", crit: "b-crit" }[f.badge.state] || "b-good";
+    var route = LANG === "ko" ? f.route : f.route_en;
+    var note = LANG === "ko" ? f.note : f.note_en;
+    var labels = LANG === "ko" ? f.labels : f.labels_en;
+    var rows = (f.days || []).map(function(d) {
+      var cls = { good: "st-good", plan: "st-plan", warn: "st-warn", crit: "st-crit" }[d.cls] || "st-plan";
+      var arrTxt = LANG === "ko" ? d.arr : String(d.arr).replace("익일", "+1d");
+      var depTxt = LANG === "ko" ? d.dep : String(d.dep).replace("익일", "+1d");
+      return "<tr><td>" + esc(LANG === "ko" ? d.label : d.label_en) + "</td><td>" + esc(depTxt) +
+             "</td><td>" + esc(arrTxt) + "</td><td class='" + cls + "'>" + esc(kindLabel(d)) + "</td></tr>";
+    }).join("");
+    html += "<div class='card'><div class='card-top'><div>" +
+      "<div class='fno'>" + esc(fno) + "</div>" +
+      "<div class='route'>" + esc(route) + " · " + esc(note) + "</div></div>" +
+      "<span class='badge " + bcls + "'><span class='dot'></span>" + esc(badgeLabel(f.badge)) + "</span></div>" +
+      "<table><thead><tr><th>" + t().th[0] + "</th><th>" + esc(labels.dep) + "</th><th>" +
+      esc(labels.arr) + "</th><th>" + t().th[1] + "</th></tr></thead><tbody>" + rows + "</tbody></table>" +
+      "<div class='links'>" +
+      "<a href='" + esc(f.fr24) + "' target='_blank' rel='noopener'>" + t().links[0] + "</a>" +
+      "<a href='https://www.flightstats.com/v2/flight-tracker/QR/" + fno.slice(2) + "' target='_blank' rel='noopener'>" + t().links[1] + "</a>" +
+      "<a href='https://fs.qatarairways.com/' target='_blank' rel='noopener'>" + t().links[2] + "</a>" +
+      "</div></div>";
+  });
+  document.getElementById("cards").innerHTML = html;
+
+  order.forEach(function(fno) {
+    var p = data.flights[fno] && data.flights[fno].position;
+    if (p && p.lat != null) placeMarker(fno, p.lat, p.lon, p.alt_ft);
+  });
+}
+
+function setLang(l) {
+  LANG = l;
+  localStorage_set("qrmon_lang", l);
+  applyStatic();
+  render();
+}
+
+function ensureMap() {
+  if (map) return;
+  var el = document.getElementById("map");
+  el.style.display = "block";
+  document.getElementById("mapNote").style.display = "block";
+  map = L.map("map").setView([32, 85], 3);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    { attribution: "&copy; OpenStreetMap contributors", maxZoom: 10 }).addTo(map);
+  L.circleMarker([25.273, 51.608], {radius:5, color:"#52514e"}).addTo(map).bindTooltip("DOH");
+  L.circleMarker([37.469, 126.451], {radius:5, color:"#52514e"}).addTo(map).bindTooltip("ICN");
+}
+
+function placeMarker(fno, lat, lon, alt) {
+  ensureMap();
+  var label = fno + (alt ? " · " + alt + " ft" : "");
+  if (markers[fno]) { markers[fno].setLatLng([lat, lon]).setTooltipContent(label); return; }
+  markers[fno] = L.circleMarker([lat, lon],
+    { radius: 8, color: "#2a78d6", fillColor: "#2a78d6", fillOpacity: 0.85 })
+    .addTo(map).bindTooltip(label, { permanent: true, direction: "top" });
+}
+
+function pollPositions() {
+  Object.keys(CALLSIGNS).forEach(function(fno) {
+    fetch("https://api.adsb.lol/v2/callsign/" + CALLSIGNS[fno])
+      .then(function(r){ return r.json(); })
+      .then(function(j) {
+        var ac = (j.ac || [])[0];
+        if (ac && ac.lat != null) placeMarker(fno, ac.lat, ac.lon, ac.alt_baro);
+      })
+      .catch(function(){});
+  });
+}
+
+// 방문자 카운터 (hits.sh — 가입 불필요)
+document.getElementById("hitsBadge").src =
+  "https://hits.sh/" + location.hostname + location.pathname.replace(/index\.html$/, "") + ".svg?label=visits&color=2a78d6";
+
+applyStatic();
+fetch("data.json?t=" + Date.now())
+  .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(function(d){ DATA = d; render(); pollPositions(); setInterval(pollPositions, 60000); })
+  .catch(function(){
+    document.getElementById("updated").textContent = "";
+    document.getElementById("loadError").style.display = "block";
+  });
+
+var subTypeEl = document.getElementById("subType"), ccode = document.getElementById("ccode"),
+    contact = document.getElementById("contact");
+subTypeEl.addEventListener("change", function() {
+  var phone = subTypeEl.value === "phone";
+  ccode.style.display = phone ? "" : "none";
+  contact.placeholder = phone ? t().ph_phone : t().ph_email;
+  contact.type = phone ? "tel" : "text";
+});
+document.getElementById("subForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  var data = new FormData(this);
+  fetch(this.action, { method: "POST", body: data, headers: { "Accept": "application/json" } })
+    .catch(function(){});
+  document.getElementById("formMsg").style.display = "block";
+  this.reset();
+  ccode.style.display = "none";
+});
+</script>
+</body>
+</html>
