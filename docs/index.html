@@ -66,6 +66,11 @@
   .stale { margin-top: 8px; font-size: 12px; padding: 10px 12px; border-radius: 8px;
     background: var(--banner-bg); color: var(--text-secondary); line-height: 1.55; display: none; }
   .stale.active { background: var(--warn-bg); color: var(--warn-text); border: 1px solid #f2ce8f; font-weight: 600; }
+  .tablekey { margin: 16px 0 -2px; font-size: 11.8px; line-height: 1.7; color: var(--text-secondary);
+    background: var(--surface-1); border: 1px solid var(--hairline); border-radius: 8px; padding: 9px 12px; }
+  .tablekey b { color: var(--text-primary); }
+  .tablekey .kg { color: var(--good-text); font-weight: 700; white-space: nowrap; }
+  .tablekey .kp { color: var(--text-muted); font-weight: 700; white-space: nowrap; }
   .banner { margin-top: 16px; border: 1px solid var(--border); border-radius: 12px;
             background: var(--banner-bg); padding: 14px 16px; }
   .banner h2 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -211,6 +216,7 @@
       <div class="sb-notes" id="sbNotes" style="display:none"></div>
     </div>
 
+    <div class="tablekey" id="tableKey" data-i18n="table_key"></div>
     <div class="cards" id="cards"></div>
 
     <div class="footer">
@@ -297,6 +303,7 @@ var I18N = {
     travel_hamad: "하마드공항 운항정보",
     sb_title: "🔔 운항·영공 안내 (Travel Update)",
     lbl_advisories: "※ 근거 권고 (<a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a> 집계): ",
+    table_key: "<b>상태 보는 법</b> — <span class='kp'>예매 가능</span>: 카타르항공에서 예매는 가능하나 운항은 아직 확인 전 · <span class='kg'>✓ 운항 예정</span>: 실시간 데이터(FlightStats)로 운항이 확인된 편 · <span class='kg'>✓ 비행 중 / 도착 완료</span>: 지금 실시간 운항 상태",
     sb_flightalerts: "항공편 차질: ",
     sb_flightnotes: "✈ 항공 운항 특기사항:",
     sb_seetable: " (아래 표에서 확인)",
@@ -364,6 +371,7 @@ var I18N = {
     travel_hamad: "Hamad Airport flight status",
     sb_title: "🔔 Flight & Airspace Update",
     lbl_advisories: "※ Advisories (via <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a>): ",
+    table_key: "<b>How to read the status</b> — <span class='kp'>Bookable</span>: available to book with Qatar Airways, operation not yet confirmed · <span class='kg'>✓ Scheduled</span>: operation confirmed in live data (FlightStats) · <span class='kg'>✓ In flight / Landed</span>: current live status",
     sb_flightalerts: "Flights affected: ",
     sb_flightnotes: "✈ Flight operations notice:",
     sb_seetable: " (see tables below)",
@@ -420,6 +428,7 @@ var I18N = {
     travel_hamad: "حالة رحلات مطار حمد",
     sb_title: "🔔 تحديث الرحلات والمجال الجوي",
     lbl_advisories: "※ التحذيرات (عبر <a href='https://safeairspace.net/qatar/' target='_blank' rel='noopener'>SafeAirspace</a>): ",
+    table_key: "<b>كيف تقرأ الحالة</b> — <span class='kp'>متاح للحجز</span>: متاح للحجز لدى الخطوط القطرية والتشغيل غير مؤكّد بعد · <span class='kg'>✓ مجدولة</span>: التشغيل مؤكّد في البيانات المباشرة (FlightStats) · <span class='kg'>✓ في الجو / وصلت</span>: الحالة المباشرة الآن",
     sb_flightalerts: "رحلات متأثرة: ",
     sb_flightnotes: "✈ ملاحظات تشغيل الرحلات:",
     sb_seetable: " (انظر الجداول أدناه)",
