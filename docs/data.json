@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-18T09:02:57+00:00",
- "generated_at_doha": "2026-07-18 12:02",
- "generated_at_seoul": "2026-07-18 18:02",
+ "generated_at_utc": "2026-07-18T09:12:49+00:00",
+ "generated_at_doha": "2026-07-18 12:12",
+ "generated_at_seoul": "2026-07-18 18:12",
  "degraded": false,
  "fetch_health": {
   "ok": 32,
@@ -9,9 +9,11 @@
  },
  "airspace": {
   "risk_level": "Three",
+  "risk_desc": "Caution",
   "keyword_closed": false,
   "open_stated": true,
   "closure_stated": true,
+  "warning_stated": true,
   "advisories": [
    {
     "code": "EASA CZIB 2026-07",
@@ -19,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-18T09:03:09+00:00",
+  "checked_at_utc": "2026-07-18T09:12:55+00:00",
   "ok": true,
   "level": "caution",
   "closed": false,
