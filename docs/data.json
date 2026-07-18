@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-18T16:45:35+00:00",
- "generated_at_doha": "2026-07-18 19:45",
- "generated_at_seoul": "2026-07-19 01:45",
+ "generated_at_utc": "2026-07-18T17:02:07+00:00",
+ "generated_at_doha": "2026-07-18 20:02",
+ "generated_at_seoul": "2026-07-19 02:02",
  "degraded": false,
  "fetch_health": {
   "ok": 32,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-18T16:45:52+00:00",
+  "checked_at_utc": "2026-07-18T17:02:11+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -168,7 +168,7 @@
    "note_en": "Daily",
    "badge": {
     "state": "good",
-    "kind": "inflight"
+    "kind": "normal"
    },
    "days": [
     {
@@ -260,15 +260,7 @@
      "confirmed": false
     }
    ],
-   "position": {
-    "lat": 36.004532,
-    "lon": 126.342258,
-    "alt_ft": 24550,
-    "gs_kt": 448.1,
-    "callsign": "QTR859",
-    "seen_at_utc": "2026-07-18T16:45:43+00:00",
-    "source": "adsb.lol"
-   },
+   "position": null,
    "fr24": "https://www.flightradar24.com/data/flights/qr859"
   },
   "QR862": {
