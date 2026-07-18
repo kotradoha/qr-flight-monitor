@@ -239,8 +239,6 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
             else:
                 if fs:
                     code = fs["code"]
-                    if code == "L":            # 이미 도착 완료 → 표시하지 않음
-                        continue
                     confirmed_any = True
                     entry["confirmed"] = True   # 이 날짜 상태가 실데이터로 확인됨(영공 폐쇄 판정의 근거가 됨)
                     worst = max(fs["delay_dep"], fs["delay_arr"])
@@ -265,6 +263,8 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
                         badge = {"state": "crit", "kind": "diverted"}
                     elif code == "A":          # 현재 비행 중
                         entry["kind"], entry["cls"] = "inflight", "good"
+                    elif code == "L":          # 도착 완료 — 당일 편은 숨기지 않고 '착륙'으로 표시
+                        entry["kind"], entry["cls"] = "landed", "good"
                     elif worst >= DELAY_ALERT_MIN and code == "S":
                         entry["kind"], entry["cls"] = "delayed", "warn"
                         alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay", "minutes": worst})

@@ -65,6 +65,7 @@
   .updated { color: var(--text-muted); font-size: 12px; margin-top: 8px; }
   .stale { margin-top: 8px; font-size: 12px; padding: 10px 12px; border-radius: 8px;
     background: var(--banner-bg); color: var(--text-secondary); line-height: 1.55; display: none; }
+  .stale.active { background: var(--warn-bg); color: var(--warn-text); border: 1px solid #f2ce8f; font-weight: 600; }
   .banner { margin-top: 16px; border: 1px solid var(--border); border-radius: 12px;
             background: var(--banner-bg); padding: 14px 16px; }
   .banner h2 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -245,6 +246,7 @@ var I18N = {
     subtitle: "카타르항공 도하–서울 노선의 정상 운항·지연·결항 여부와 카타르 영공 상황을 15분마다 자동으로 불러와 보여주는 대시보드입니다. 표에는 현재 비행 중이거나 앞으로 약 1주일간 예정된 항공편만 표시되며, 예정편은 카타르항공 공식 스케줄과 동일합니다.",
     updated: function(d){ return "마지막 확인: " + d.generated_at_doha + " (카타르) / " + d.generated_at_seoul + " (한국)"; },
     stale_note: "⚠ 실시간 운항 데이터 갱신이 지연되고 있습니다. 아래 상태는 정기 스케줄 기준이며, 최신 상태는 각 항공편의 Flightradar24·FlightStats·카타르항공 공식 링크에서 확인해 주세요.",
+    stale_age: function(m){ var h=Math.floor(m/60), r=m%60; var t=h?(h+"시간 "+r+"분"):(m+"분"); return "⚠ 자동 갱신이 약 " + t + " 전에서 멈춰 있어, 아래 운항 상태가 최신이 아닐 수 있습니다. 실제 상태는 카타르항공 공식(fs.qatarairways.com)·Flightradar24에서 확인해 주세요."; },
     load_error: "데이터를 불러오지 못했습니다. 잠시 후 새로고침해 주세요.",
     air_open_title: "🟢 카타르 영공 · 정상 운영 중",
     air_open_sub: function(risk){ return "지금 카타르(도하 하마드) 영공은 정상적으로 열려 있고, 서울 노선도 평소대로 운항하고 있어요" +
@@ -311,6 +313,7 @@ var I18N = {
     subtitle: "A dashboard that automatically pulls and displays, every 15 minutes, the on-time / delay / cancellation status of Qatar Airways' Doha–Seoul flights and Qatar airspace conditions. The tables show only flights currently in the air or scheduled over roughly the next week; scheduled flights match Qatar Airways' official timetable.",
     updated: function(d){ return "Last checked: " + d.generated_at_doha + " (Qatar) / " + d.generated_at_seoul + " (Korea)"; },
     stale_note: "⚠ Live flight data is delayed. The statuses below are based on the regular schedule; for the latest status use each flight's Flightradar24 / FlightStats / Qatar Airways links.",
+    stale_age: function(m){ var h=Math.floor(m/60), r=m%60; var t=h?(h+"h "+r+"m"):(m+" min"); return "⚠ Auto-refresh appears stalled (last update ~" + t + " ago), so the statuses below may be out of date. Please verify via Qatar Airways official (fs.qatarairways.com) / Flightradar24."; },
     load_error: "Failed to load data. Please refresh in a moment.",
     air_open_title: "🟢 Qatar airspace · Open / operating normally",
     air_open_sub: function(risk){ return "Right now Qatari (Doha Hamad) airspace is open and the Seoul route is running as usual" +
@@ -377,6 +380,7 @@ var I18N = {
     subtitle: "لوحة تعرض تلقائيًا كل 15 دقيقة حالة رحلات الخطوط الجوية القطرية بين الدوحة وسيول (في الموعد/التأخير/الإلغاء) وأوضاع المجال الجوي القطري. وتعرض الجداول فقط الرحلات الجارية حاليًا أو المجدولة خلال نحو أسبوع قادم؛ والرحلات المجدولة تطابق الجدول الرسمي للخطوط القطرية.",
     updated: function(d){ return "آخر تحديث: " + d.generated_at_doha + " (قطر) / " + d.generated_at_seoul + " (كوريا)"; },
     stale_note: "⚠ تحديث بيانات الرحلات المباشرة متأخر حاليًا. الحالات أدناه مبنية على الجدول المعتاد؛ لأحدث حالة استخدم روابط Flightradar24 / FlightStats / الخطوط القطرية لكل رحلة.",
+    stale_age: function(m){ var h=Math.floor(m/60), r=m%60; var t=h?(h+" س "+r+" د"):(m+" دقيقة"); return "⚠ يبدو أن التحديث التلقائي متوقف (آخر تحديث قبل نحو " + t + ")، لذا قد تكون الحالات أدناه غير محدّثة. يرجى التحقق عبر الموقع الرسمي للخطوط القطرية (fs.qatarairways.com) و Flightradar24."; },
     load_error: "تعذّر تحميل البيانات. يرجى تحديث الصفحة بعد قليل.",
     air_open_title: "🟢 المجال الجوي القطري · مفتوح ويعمل بشكل طبيعي",
     air_open_sub: function(risk){ return "المجال الجوي القطري (الدوحة – حمد) مفتوح حاليًا، ورحلات سيول تعمل كالمعتاد" +
@@ -431,6 +435,17 @@ var I18N = {
 
 var DATA = null;
 
+var STALE_MIN = 45;   // 마지막 갱신이 이 분(minute) 이상 지나면 '갱신 지연' 경고
+function dataAgeMinutes(d) {
+  try {
+    var g = d && d.generated_at_utc;
+    if (!g) return null;
+    var t0 = Date.parse(String(g).replace(" ", "T"));
+    if (isNaN(t0)) return null;
+    var mins = Math.floor((Date.now() - t0) / 60000);
+    return mins < 0 ? 0 : mins;
+  } catch (e) { return null; }
+}
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 // http/https 링크만 허용(javascript: 등 위험 스킴 차단). 아니면 기본 링크로 대체.
@@ -540,7 +555,15 @@ function render() {
   var data = DATA;
   document.getElementById("updated").textContent = t().updated(data);
   var stale = document.getElementById("staleNote");
-  stale.style.display = "none";  // 상세 안내는 통합 박스에서 표시
+  // 데이터가 오래되면(자동 갱신 중단 등) 낡은 상태를 최신처럼 보이지 않게 경고를 띄운다.
+  var ageMin = dataAgeMinutes(data);
+  if (ageMin != null && ageMin >= STALE_MIN) {
+    stale.innerHTML = t().stale_age(ageMin);
+    stale.className = "stale active";
+    stale.style.display = "";
+  } else {
+    stale.style.display = "none";
+  }
   renderStatusBox();
 
   var order = data.order || Object.keys(data.flights || {});
