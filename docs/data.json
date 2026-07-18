@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-18T08:31:31+00:00",
- "generated_at_doha": "2026-07-18 11:31",
- "generated_at_seoul": "2026-07-18 17:31",
+ "generated_at_utc": "2026-07-18T08:32:57+00:00",
+ "generated_at_doha": "2026-07-18 11:32",
+ "generated_at_seoul": "2026-07-18 17:32",
  "degraded": false,
  "fetch_health": {
   "ok": 32,
@@ -19,7 +19,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-18T08:31:35+00:00",
+  "checked_at_utc": "2026-07-18T08:33:07+00:00",
   "ok": true,
   "level": "caution",
   "closed": false,
@@ -145,12 +145,12 @@
     }
    ],
    "position": {
-    "lat": 37.40625,
-    "lon": 126.035507,
-    "alt_ft": 5250,
-    "gs_kt": 235.1,
+    "lat": 37.483303,
+    "lon": 126.045784,
+    "alt_ft": 3725,
+    "gs_kt": 243.8,
     "callsign": "QTR858",
-    "seen_at_utc": "2026-07-18T08:31:31+00:00",
+    "seen_at_utc": "2026-07-18T08:32:59+00:00",
     "source": "adsb.lol"
    },
    "fr24": "https://www.flightradar24.com/data/flights/qr858"
