@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-18T08:32:57+00:00",
- "generated_at_doha": "2026-07-18 11:32",
- "generated_at_seoul": "2026-07-18 17:32",
+ "generated_at_utc": "2026-07-18T08:45:25+00:00",
+ "generated_at_doha": "2026-07-18 11:45",
+ "generated_at_seoul": "2026-07-18 17:45",
  "degraded": false,
  "fetch_health": {
   "ok": 32,
@@ -19,7 +19,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-18T08:33:07+00:00",
+  "checked_at_utc": "2026-07-18T08:45:33+00:00",
   "ok": true,
   "level": "caution",
   "closed": false,
@@ -52,7 +52,7 @@
    "note_en": "Daily · A350-1000",
    "badge": {
     "state": "good",
-    "kind": "inflight"
+    "kind": "normal"
    },
    "days": [
     {
@@ -60,10 +60,10 @@
      "label": "7/18 (토)",
      "label_en": "Sat 7/18",
      "dep": "02:31",
-     "arr": "17:49",
-     "kind": "inflight",
+     "arr": "17:42",
+     "kind": "landed",
      "cls": "good",
-     "delay": 44,
+     "delay": 37,
      "confirmed": true
     },
     {
@@ -144,15 +144,7 @@
      "confirmed": false
     }
    ],
-   "position": {
-    "lat": 37.483303,
-    "lon": 126.045784,
-    "alt_ft": 3725,
-    "gs_kt": 243.8,
-    "callsign": "QTR858",
-    "seen_at_utc": "2026-07-18T08:32:59+00:00",
-    "source": "adsb.lol"
-   },
+   "position": null,
    "fr24": "https://www.flightradar24.com/data/flights/qr858"
   },
   "QR859": {
