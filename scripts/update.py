@@ -270,9 +270,11 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
                         alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay", "minutes": worst})
                         if badge is None or badge.get("state") == "good":
                             badge = {"state": "warn", "kind": "delayed", "delay": worst}
-                    else:                      # 정시 예정(확인됨)
+                    elif code == "S":          # 정시 예정(확인됨)
                         entry["kind"], entry["cls"] = "sched", "good"
-                # fs None(±3 내 데이터 없음) → '운항 예정'(plan) 유지
+                    else:                      # 알 수 없는/새 상태 코드 → '정상'으로 오인하지 않고 '확인 중'
+                        entry["kind"], entry["cls"] = "checking", "plan"
+                # fs None(±3 내 데이터 없음) → '예매 가능'(plan) 유지
         # offset > 3 → 발행 스케줄(운항 예정) 그대로 표시
         days.append(entry)
 
@@ -420,23 +422,27 @@ def parse_advisories(text):
 
 
 def _airspace_open_stated(low):
-    """현재 '정상/열림' 진술 감지. 과거 폐쇄 서술과 구분하는 핵심."""
+    """현재 '영공이 열림/정상' 진술 감지. 공항(Hamad)만 열려 있다는 서술이 영공 폐쇄를 덮지 않도록
+    'open'은 영공(airspace/FIR/OTDF/overflight) 문맥으로 한정한다."""
     return bool(
-        re.search(r"(?:remains?|currently|now|still)\s+open", low)
-        or re.search(r"operating\s+(?:largely\s+)?normally", low)
-        or re.search(r"open\s+and\s+(?:is\s+)?operating", low)
+        re.search(r"(?:airspace|fir|otdf|overflight)[a-z /()]{0,40}\b(?:remains?|is|are|currently|now|still)\s+open", low)
+        or re.search(r"operating\s+(?:largely\s+|mostly\s+)?normally", low)
     )
 
 
 def _airspace_closure_stated(low):
-    """'현재형' 폐쇄 진술만 감지. 과거형('FIR closed and reopened')·명사형('closures')은
-    링크동사(is/are/remains/currently/now) 요구로 배제해 오탐을 막는다."""
+    """'현재형' 영공 폐쇄 진술 감지(다양한 실제 표현 포함). 과거형('FIR closed and reopened')·
+    명사형('airspace closures')은 배제하되, 실제 폐쇄 문구는 폭넓게 잡는다. (열림 진술이 있으면 main에서 무효화)"""
     pats = [
-        r"(?:airspace|fir|otdf|airport)[a-z /()]{0,40}\b(?:is|are|remains?|currently|now)\b[a-z /]{0,15}clos",
-        r"clos(?:ed|ure)[a-z /]{0,15}until\s+\d",              # closed until <미래 일자>
-        r"all\s+flights?\s+(?:are\s+)?(?:currently\s+)?suspend",
-        r"complete(?:ly)?\s+closure",
-        r"closed\s+to\s+all\s+(?:traffic|flights)",
+        r"(?:airspace|fir|otdf)[a-z /()]{0,40}\b(?:is|are|remains?|currently|now|has\s+been|been)\b[a-z /]{0,15}clos",
+        r"clos(?:ed|ure|es|ing)\s+(?:of\s+)?(?:its\s+|the\s+|all\s+)?(?:airspace|fir|otdf|overflight)",  # "closed its airspace"
+        r"airspace\s+closure[a-z /]{0,20}(?:in\s+effect|until|effective|remains)",
+        r"clos(?:ed|ure)[a-z /]{0,15}until\s+\d",                     # closed until <일자>
+        r"(?:all\s+)?(?:flights?|operations?|traffic)\s+(?:are\s+)?(?:currently\s+|been\s+)?suspend",
+        r"suspend\w*\s+(?:all\s+)?(?:flights?|operations?|overflight|traffic)",
+        r"complete(?:ly)?\s+clos",
+        r"closed\s+to\s+all\s+(?:traffic|flights?|operations?)",
+        r"no[- ]fly\s+zone",
     ]
     return any(re.search(p, low) for p in pats)
 
@@ -462,16 +468,35 @@ def _risk_elevated(risk_desc, risk_level):
     return False
 
 
+def _airspace_unavailable():
+    """영공 상태를 확인하지 못했을 때의 값. ok=False → main에서 'unknown'(회색)으로 처리.
+    '정상(green)'으로 절대 떨어지지 않게 하고, 이전 값을 되살리지도 않는다(끈적임 방지)."""
+    return {
+        "risk_level": None, "risk_desc": None,
+        "keyword_closed": False, "open_stated": False, "closure_stated": False,
+        "warning_stated": False, "advisories": [],
+        "source": "https://safeairspace.net/qatar/",
+        "checked_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "ok": False,
+    }
+
+
 def fetch_airspace(prev):
-    """SafeAirspace 카타르 페이지에서 위험 등급·(현재형)폐쇄 진술·권고 유효기간 추출. 실패 시 이전 값 유지.
+    """SafeAirspace 카타르 페이지에서 위험 등급·(현재형)폐쇄 진술·권고 유효기간 추출.
 
     폐쇄(red) 판정은 '결항 정황'이 아니라 공역 당국 집계(SafeAirspace)의 **현재형 폐쇄 진술**에만
     근거한다(자동 감지). 과거/재개 서술 오탐을 막기 위해 현재 '열림' 진술이 있으면 폐쇄로 보지 않는다.
-    자동 감지가 틀릴 경우를 대비해 운영자가 manual_notice.json 으로 강제 지정할 수 있다(main 참조)."""
+    ★ 200이라도 실제 카타르 영공 페이지가 아니면(차단·JS쉘·오류 페이지) ok=False로 처리해
+      '거짓 정상(green)'을 방지한다. 실패/미검증 시 이전 값을 되살리지 않고 unknown으로 둔다."""
     try:
         html = http_get("https://safeairspace.net/qatar/")
         text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html))
         low = text.lower()
+        # 콘텐츠 검증(sentinel): 실제 카타르 영공 페이지인지 확인. 아니면 신뢰 불가 → unknown.
+        if not ("qatar" in low and ("airspace" in low or "otdf" in low or " fir" in low
+                                    or "risk" in low or "notam" in low or "easa" in low)):
+            print("[warn] airspace: page content unrecognized (sentinel missing)", file=sys.stderr)
+            return _airspace_unavailable()
         m = re.search(r"(?:Risk\s*)?Level[:\s]*([A-Za-z]+)(?:\s*[-–—:]\s*([A-Za-z][A-Za-z ]{0,20}))?", text)
         risk_level = m.group(1).strip() if m else None
         risk_desc = (m.group(2).strip() if (m and m.group(2)) else None)
@@ -493,9 +518,7 @@ def fetch_airspace(prev):
         }
     except Exception as e:  # noqa: BLE001
         print(f"[warn] airspace fetch failed: {e}", file=sys.stderr)
-        old = (prev or {}).get("airspace") or {"level": "unknown"}
-        old["ok"] = False
-        return old
+        return _airspace_unavailable()
 
 
 def main():
@@ -558,12 +581,14 @@ def main():
     doha_today = now_utc.astimezone(TZ_DOHA).date()
     today_iso = doha_today.isoformat()
     tom_iso = (doha_today + timedelta(days=1)).isoformat()
-    cancel_recent = 0
+    cancel_flights = set()
     for fno in FLIGHTS:
         for day in (flights_out.get(fno) or {}).get("days", []):
             if day.get("confirmed") and day.get("kind") in ("cancelled", "diverted") \
                     and day.get("date") in (today_iso, tom_iso):
-                cancel_recent += 1
+                cancel_flights.add(fno)
+    # 서로 다른 편 수로 센다(한 편의 이틀 연속 결항을 2로 오인해 '폐쇄'로 격상하지 않도록).
+    cancel_recent = len(cancel_flights)
 
     # 영공 경보 신호(폐쇄 진술·회피/고위험 문구·권고 코드·상승 위험등급) 존재 여부
     concern = bool(airspace.get("keyword_closed") or airspace.get("warning_stated")
@@ -591,8 +616,10 @@ def main():
     if override_source:
         airspace["override_source"] = override_source
 
-    # 열화 판정: 실시간 확인이 하나도 안 됐고 조회 오류가 있었으면 degraded
-    degraded = (confirmed_total == 0 and health["err"] > 0)
+    # 열화 판정: 실시간으로 '확인된 편'이 하나도 없으면 degraded.
+    #   네트워크 오류(err>0)뿐 아니라, FlightStats가 200이지만 빈/변경된 응답을 주는 경우
+    #   (endpoint 스키마 변경 등)도 confirmed_total==0 으로 잡아 '정상'으로 오인하지 않는다.
+    degraded = (confirmed_total == 0)
 
     # 긴급 Travel Update: 운영자가 docs/manual_notice.json 을 편집하면 표 위에 즉시 표시된다.
     # (카타르항공/하마드공항 공식 공지를 붙여넣는 용도. 자동 스크랩은 JS 렌더 페이지라 신뢰도가 낮아
