@@ -105,7 +105,18 @@
 ]</div>
   <p class="small">문구가 끝나면 <code>"items": []</code> (빈 대괄호)로 되돌리면 사라집니다.</p>
 
-  <h2>⑤ 갱신이 멈춘 것 같을 때</h2>
+  <h2>⑤ 정기편이 한동안 안 뜰 때 (임시 미운영)</h2>
+  <p>카타르항공이 특정 정기편을 <b>한동안 운휴</b>(예: 주간편 QR862·QR863 일시 중단)하면, 표를 지우지 않고
+     그 카드에 <b class="o">⏸ 임시 미운영</b>으로 표시됩니다. <b>매일편</b>은 근접 며칠간 편이 계속 안 잡히면
+     <b>자동으로</b> 잡히지만, <b>주간편이나 장기 운휴</b>는 아래처럼 직접 지정하는 것이 확실합니다.
+     같은 <code>manual_notice.json</code> 의 <code>suspended_flights</code> 를 고칩니다.</p>
+  <div class="code"><span class="k">"suspended_flights"</span>: {
+  <span class="k">"QR863"</span>: { <span class="k">"until"</span>: <span class="v">"2026-08-31"</span>, <span class="k">"note"</span>: <span class="v">"임시 운휴 안내"</span>, <span class="k">"note_en"</span>: <span class="v">"Temporarily suspended"</span> }
+}</div>
+  <p class="small"><code>until</code>(재개 예정일)·<code>note</code>(안내 문구)는 <b>생략 가능</b>합니다. 간단히 <code>"suspended_flights": ["QR863"]</code> 처럼 편명만 적어도 됩니다.
+     운항이 재개되면 <code>"suspended_flights": {}</code> (빈 중괄호)로 되돌려 주세요.</p>
+
+  <h2>⑥ 갱신이 멈춘 것 같을 때</h2>
   <p>페이지 상단의 “마지막 확인” 시각이 <b>한참 전(수십 분 이상)</b>에서 안 바뀌면, 저장소의
      <b>Actions</b> 탭을 열어 <b>Update flight data</b> 워크플로가 초록색으로 돌고 있는지 확인하세요.
      빨간 X(실패)가 보이면 클릭해 내용을 확인하시고, 필요하면 저에게 알려 주시면 점검해 드리겠습니다.</p>
