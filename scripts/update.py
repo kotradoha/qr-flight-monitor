@@ -10,10 +10,10 @@ GitHub Actions에서 매시간 실행되어 docs/data.json 을 갱신한다.
   - 열화(degraded) 표시: 실시간 확인이 하나도 안 되면 data.json에 degraded=True를
     기록해 프론트가 '스케줄 기준·확인 중'으로 정직하게 표시하도록 한다.
 
-데이터 출처:
-  - FlightStats(Cirium) 비공식 JSON 엔드포인트 (v2 웹페이지가 사용하는 것과 동일)
-  - SafeAirspace (카타르 영공 폐쇄·권고)
-  - adsb.lol (실시간 항공기 위치, 커뮤니티 ADS-B)
+데이터 출처(화면에 실제로 표시되는 것):
+  - FlightStats(Cirium) 비공식 JSON 엔드포인트 — 운항 상태·시각(공항 게이트 기준)
+  - SafeAirspace — 카타르 영공 폐쇄·권고
+  - 카타르항공 발행 스케줄(코드 내 하드코딩) — '예매 가능' 향후편
 
 status kind (프론트에서 한/영 라벨로 변환):
   sched / inflight / landed / cancelled / diverted / delayed
@@ -287,31 +287,10 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
         else:
             badge = {"state": "good", "kind": "normal"}
 
-    position = safe_position(f"QTR{num}")
-    if position and badge == {"state": "good", "kind": "normal"}:
-        badge = {"state": "good", "kind": "inflight"}
-
+    # 실시간 위치(adsb.lol)는 화면에 표시하지 않으므로 수집하지 않는다(불필요한 외부요청 제거).
     out_cfg = {k: v for k, v in cfg.items() if k not in ("origin_tz", "arr_tz")}
-    return {**out_cfg, "badge": badge, "days": days, "position": position,
+    return {**out_cfg, "badge": badge, "days": days, "position": None,
             "fr24": f"https://www.flightradar24.com/data/flights/qr{num}"}, confirmed_any
-
-
-def safe_position(callsign):
-    try:
-        raw = json.loads(http_get(f"https://api.adsb.lol/v2/callsign/{callsign}", retries=2))
-        ac = (raw.get("ac") or [])
-        if not ac:
-            return None
-        a = ac[0]
-        if a.get("lat") is None:
-            return None
-        return {"lat": a.get("lat"), "lon": a.get("lon"), "alt_ft": a.get("alt_baro"),
-                "gs_kt": a.get("gs"), "callsign": callsign,
-                "seen_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                "source": "adsb.lol"}
-    except Exception as e:  # noqa: BLE001
-        print(f"[warn] position {callsign}: {e}", file=sys.stderr)
-        return None
 
 
 def discover_extra_flights(now_utc, alerts, health):
@@ -372,7 +351,7 @@ def discover_extra_flights(now_utc, alerts, health):
                 "route": route, "route_en": route_en, "labels": labels, "labels_en": labels_en,
                 "daily": False, "temp": True,
                 "note": "임시·추가 편성 (자동 감지)", "note_en": "Temporary / extra service (auto-detected)",
-                "badge": badge, "days": days, "position": safe_position(f"QTR{num}"),
+                "badge": badge, "days": days, "position": None,
                 "fr24": f"https://www.flightradar24.com/data/flights/qr{num}",
             }
         except Exception as e:  # noqa: BLE001
