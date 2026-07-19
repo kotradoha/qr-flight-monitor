@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-19T19:15:24+00:00",
- "generated_at_doha": "2026-07-19 22:15",
- "generated_at_seoul": "2026-07-20 04:15",
+ "generated_at_utc": "2026-07-19T19:30:33+00:00",
+ "generated_at_doha": "2026-07-19 22:30",
+ "generated_at_seoul": "2026-07-20 04:30",
  "degraded": false,
  "fetch_health": {
   "ok": 64,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-19T19:15:43+00:00",
+  "checked_at_utc": "2026-07-19T19:30:38+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -98,10 +98,10 @@
      "label_en": "Wed 7/22",
      "dep": "02:20",
      "arr": "17:05",
-     "kind": "plan",
-     "cls": "plan",
+     "kind": "sched",
+     "cls": "good",
      "delay": 0,
-     "confirmed": false
+     "confirmed": true
     },
     {
      "date": "2026-07-23",
@@ -200,10 +200,10 @@
      "label_en": "Wed 7/22",
      "dep": "01:20",
      "arr": "05:20",
-     "kind": "plan",
-     "cls": "plan",
+     "kind": "sched",
+     "cls": "good",
      "delay": 0,
-     "confirmed": false
+     "confirmed": true
     },
     {
      "date": "2026-07-23",
