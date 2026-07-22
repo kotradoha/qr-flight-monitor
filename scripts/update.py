@@ -203,9 +203,11 @@ def classify(fs, entry, fno, offset, d, alerts):
         entry["kind"], entry["cls"] = "diverted", "crit"
         alerts.append({"flight": fno, "date": d.isoformat(), "type": "diverted"})
         return "diverted"
-    if worst >= DELAY_ALERT_MIN and code in ("S", "A"):
+    if (fs["delay_dep"] >= DELAY_ALERT_MIN or fs["delay_arr"] >= DELAY_ALERT_MIN) and code in ("S", "A"):
         entry["kind"], entry["cls"] = "delayed", "warn"
-        alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay", "minutes": worst})
+        entry["delay_dep"], entry["delay_arr"] = fs["delay_dep"], fs["delay_arr"]  # 출발·도착 각각
+        alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay",
+                       "minutes": worst, "dep": fs["delay_dep"], "arr": fs["delay_arr"]})
         return ("delayed", worst) if offset >= 0 else None
     entry["kind"] = {"S": "sched", "A": "inflight", "L": "landed"}.get(code, "sched")
     entry["cls"] = "good"
@@ -297,9 +299,11 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
                         entry["kind"], entry["cls"] = "inflight", "good"
                     elif code == "L":          # 도착 완료 — 당일 편은 숨기지 않고 '착륙'으로 표시
                         entry["kind"], entry["cls"] = "landed", "good"
-                    elif worst >= DELAY_ALERT_MIN and code == "S":
+                    elif (fs["delay_dep"] >= DELAY_ALERT_MIN or fs["delay_arr"] >= DELAY_ALERT_MIN) and code == "S":
                         entry["kind"], entry["cls"] = "delayed", "warn"
-                        alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay", "minutes": worst})
+                        entry["delay_dep"], entry["delay_arr"] = fs["delay_dep"], fs["delay_arr"]  # 출발·도착 각각
+                        alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay",
+                                       "minutes": worst, "dep": fs["delay_dep"], "arr": fs["delay_arr"]})
                         if badge is None or badge.get("state") == "good":
                             badge = {"state": "warn", "kind": "delayed", "delay": worst}
                     elif code == "S":          # 정시 예정(확인됨)
