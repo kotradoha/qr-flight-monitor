@@ -242,6 +242,7 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
     net_error = False
     sched_checked = 0           # 근접(±3일) 예정일 중 조회 '성공' 건수
     sched_absent = 0            # 그 중 해당 편이 아예 없던(None) 건수 → 운휴 신호
+    sched_obs = {}              # FlightStats '예정(scheduled)' 출발시각 관측(정기 스케줄 변경 감지용)
 
     # 표시 정책:
     #  - 카타르항공 발행 스케줄 기준으로 '오늘 이후'만 표시(도착 완료편은 제외).
@@ -275,6 +276,10 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
                     code = fs["code"]
                     confirmed_any = True
                     entry["confirmed"] = True   # 이 날짜 상태가 실데이터로 확인됨(영공 폐쇄 판정의 근거가 됨)
+                    # 정기 스케줄 변경 감지: FlightStats '예정' 출발시각(지연 아님)을 관측해 하드코딩값과 비교.
+                    _sd = to_local(fs.get("dep_sched_utc"), tz)
+                    if _sd:
+                        sched_obs[_sd] = sched_obs.get(_sd, 0) + 1
                     worst = max(fs["delay_dep"], fs["delay_arr"])
                     entry["delay"] = worst
                     # ±3일 이내: 실제(예상→예정) 시각을 반영 → 스케줄 변경/지연(예: 17:05→17:15)까지 표시.
@@ -330,10 +335,18 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
     #   최종 확정은 main()에서 파이프라인이 열화(degraded)가 아닐 때만 반영한다.
     susp_auto = (sched_checked >= 2 and sched_absent == sched_checked)
 
+    # 정기 스케줄 변경 감지: 가장 많이 관측된 '예정' 출발시각이 하드코딩값과 다르고 2일 이상 일관되면 신호.
+    #   (단발 이상치·지연은 걸러진다. 지연은 '예정'이 아닌 '예상' 시각이라 여기 영향 없음.)
+    sched_change = None
+    if sched_obs:
+        top, cnt = max(sched_obs.items(), key=lambda kv: kv[1])
+        if cnt >= 2 and top != cfg["sched_dep"]:
+            sched_change = top
+
     # 실시간 위치(adsb.lol)는 화면에 표시하지 않으므로 수집하지 않는다(불필요한 외부요청 제거).
     out_cfg = {k: v for k, v in cfg.items() if k not in ("origin_tz", "arr_tz")}
     return {**out_cfg, "badge": badge, "days": days, "position": None,
-            "_susp_auto": susp_auto}, confirmed_any
+            "_susp_auto": susp_auto, "_sched_change": sched_change}, confirmed_any
 
 
 def discover_extra_flights(now_utc, alerts, health):
@@ -611,9 +624,19 @@ def main():
             _mark_suspended(fdict, note, note_en, until, "operator", url)
         elif auto and pipeline_ok:
             _mark_suspended(fdict, None, None, None, "auto")
+    # 유지보수 신호 수집: 정기 스케줄 변경 의심 + 임시·추가편 감지(운영자 안내용).
+    maintenance = {"extra_flights": sorted(extra.keys()), "schedule_review": []}
+    for fno in core_order:
+        fdict = flights_out.get(fno)
+        ch = fdict.pop("_sched_change", None) if isinstance(fdict, dict) else None
+        if ch:
+            maintenance["schedule_review"].append(
+                {"flight": fno, "field": "dep",
+                 "expected": FLIGHTS[fno]["sched_dep"], "observed": ch})
     for fdict in flights_out.values():   # 예외 경로 대비 임시키 정리
         if isinstance(fdict, dict):
             fdict.pop("_susp_auto", None)
+            fdict.pop("_sched_change", None)
 
     airspace = fetch_airspace(prev)
 
@@ -711,6 +734,7 @@ def main():
         "travel_updates": travel_updates,
         "order": order,
         "flights": flights_out,
+        "maintenance": maintenance,
     }
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     DATA_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
