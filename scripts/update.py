@@ -333,8 +333,7 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
     # 실시간 위치(adsb.lol)는 화면에 표시하지 않으므로 수집하지 않는다(불필요한 외부요청 제거).
     out_cfg = {k: v for k, v in cfg.items() if k not in ("origin_tz", "arr_tz")}
     return {**out_cfg, "badge": badge, "days": days, "position": None,
-            "_susp_auto": susp_auto,
-            "fr24": f"https://www.flightradar24.com/data/flights/qr{num}"}, confirmed_any
+            "_susp_auto": susp_auto}, confirmed_any
 
 
 def discover_extra_flights(now_utc, alerts, health):
@@ -396,7 +395,6 @@ def discover_extra_flights(now_utc, alerts, health):
                 "daily": False, "temp": True,
                 "note": "임시·추가 편성 (자동 감지)", "note_en": "Temporary / extra service (auto-detected)",
                 "badge": badge, "days": days, "position": None,
-                "fr24": f"https://www.flightradar24.com/data/flights/qr{num}",
             }
         except Exception as e:  # noqa: BLE001
             print(f"[warn] extra scan QR{num}: {e}", file=sys.stderr)
