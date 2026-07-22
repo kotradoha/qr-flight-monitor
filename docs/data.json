@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-22T02:15:26+00:00",
- "generated_at_doha": "2026-07-22 05:15",
- "generated_at_seoul": "2026-07-22 11:15",
+ "generated_at_utc": "2026-07-22T02:30:32+00:00",
+ "generated_at_doha": "2026-07-22 05:30",
+ "generated_at_seoul": "2026-07-22 11:30",
  "degraded": false,
  "fetch_health": {
   "ok": 66,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-22T02:15:48+00:00",
+  "checked_at_utc": "2026-07-22T02:30:54+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
