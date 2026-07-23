@@ -113,9 +113,10 @@
   tr:last-child td { border-bottom: none; }
   .st-good { color: var(--good-text); font-weight: 600; }
   .st-plan { color: var(--text-secondary); }
-  .st-warn { color: var(--text-primary); font-weight: 600; }
+  .st-warn { color: var(--warn-text); font-weight: 600; }
   .st-crit { color: var(--crit-text); font-weight: 600; }
   .st-susp { color: #a2701c; font-weight: 600; }
+  .dly { color: var(--warn-text); font-weight: 600; }
   .card-susp { margin: 2px 0 10px; padding: 7px 11px; border-radius: 8px; font-size: 12.5px;
                font-weight: 600; color: #8a5a12; background: #fdf3e0; border: 1px solid #f0d9a8; }
   .card-susp .cs-note { font-weight: 500; color: #9a7433; }
@@ -400,11 +401,12 @@ function applyStatic() {
   document.getElementById("langAr").className = LANG === "ar" ? "on" : "";
 }
 
-function kindLabel(d) {
-  if (d.kind === "delayed") return t().delayed(d);
-  var base = t().kinds[d.kind] || d.kind;
+// 상태 셀 HTML(안전하게 이스케이프). 비행 중·도착 완료는 녹색 유지하고, 지연 부가문구만 황토색 span으로.
+function statusHtml(d) {
+  if (d.kind === "delayed") return esc(t().delayed(d));   // '지연' 상태 자체는 셀 전체가 황토색(st-warn)
+  var base = esc(t().kinds[d.kind] || d.kind);
   if ((d.kind === "inflight" || d.kind === "landed") && (((d.delay_arr||0) >= 20) || ((d.delay_dep||0) >= 20))) {
-    base += t().delay_suffix(d);
+    base += "<span class='dly'>" + esc(t().delay_suffix(d)) + "</span>";
   }
   return base;
 }
@@ -520,7 +522,7 @@ function render() {
       var depTxt = LANG === "ko" ? d.dep : String(d.dep).replace("익일", "+1d");
       var arrTxt = LANG === "ko" ? d.arr : String(d.arr).replace("익일", "+1d");
       return "<tr><td>" + esc(LANG === "ko" ? d.label : d.label_en) + "</td><td>" + esc(depTxt) +
-             "</td><td>" + esc(arrTxt) + "</td><td class='" + cls + "'>" + esc(kindLabel(d)) + "</td></tr>";
+             "</td><td>" + esc(arrTxt) + "</td><td class='" + cls + "'>" + statusHtml(d) + "</td></tr>";
     }).join("");
     var susp = "";
     if (f.suspended) {

@@ -214,9 +214,8 @@ def classify(fs, entry, fno, offset, d, alerts):
     entry["kind"] = {"S": "sched", "A": "inflight", "L": "landed"}.get(code, "sched")
     entry["cls"] = "good"
     if delayed_now and code in ("A", "L"):
-        entry["delay_dep"], entry["delay_arr"] = fs["delay_dep"], fs["delay_arr"]
+        entry["delay_dep"], entry["delay_arr"] = fs["delay_dep"], fs["delay_arr"]  # 상태색은 녹색 유지
         if code == "A":
-            entry["cls"] = "warn"
             alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay",
                            "minutes": worst, "dep": fs["delay_dep"], "arr": fs["delay_arr"]})
             return ("delayed", worst)
@@ -309,11 +308,10 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
                         entry["kind"], entry["cls"] = "diverted", "crit"
                         alerts.append({"flight": fno, "date": d.isoformat(), "type": "diverted"})
                         badge = {"state": "crit", "kind": "diverted"}
-                    elif code == "A":          # 현재 비행 중 — 도착/출발 지연이 크면 함께 표기(예상)
+                    elif code == "A":          # 현재 비행 중 — 상태는 녹색 유지, 지연이 크면 지연만 별도 표기
                         entry["kind"], entry["cls"] = "inflight", "good"
                         if fs["delay_dep"] >= DELAY_ALERT_MIN or fs["delay_arr"] >= DELAY_ALERT_MIN:
                             entry["delay_dep"], entry["delay_arr"] = fs["delay_dep"], fs["delay_arr"]
-                            entry["cls"] = "warn"
                             alerts.append({"flight": fno, "date": d.isoformat(), "type": "delay",
                                            "minutes": worst, "dep": fs["delay_dep"], "arr": fs["delay_arr"]})
                             if badge is None or badge.get("state") == "good":
