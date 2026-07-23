@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-23T01:15:24+00:00",
- "generated_at_doha": "2026-07-23 04:15",
- "generated_at_seoul": "2026-07-23 10:15",
+ "generated_at_utc": "2026-07-23T01:30:34+00:00",
+ "generated_at_doha": "2026-07-23 04:30",
+ "generated_at_seoul": "2026-07-23 10:30",
  "degraded": false,
  "fetch_health": {
   "ok": 66,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-23T01:15:34+00:00",
+  "checked_at_utc": "2026-07-23T01:30:56+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -175,8 +175,8 @@
      "date": "2026-07-23",
      "label": "7/23 (목)",
      "label_en": "Thu 7/23",
-     "dep": "01:10",
-     "arr": "04:42",
+     "dep": "01:09",
+     "arr": "05:09",
      "kind": "inflight",
      "cls": "good",
      "delay": 0,
