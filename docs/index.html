@@ -417,7 +417,12 @@ function affectedSummary(alerts) {
     var fl = esc(a.flight || "");
     if (a.type === "cancelled") return fl + " " + d + (LANG === "ko" ? " 결항" : " cancelled");
     if (a.type === "diverted")  return fl + " " + d + (LANG === "ko" ? " 회항" : " diverted");
-    if (a.type === "delay")     return fl + " " + d + (LANG === "ko" ? " " + esc(a.minutes) + "분 지연" : " +" + esc(a.minutes) + "min");
+    if (a.type === "delay") {
+      var dp = +(a.dep) || 0, ar = +(a.arr) || 0;      // 더 큰 쪽으로 출발/도착 방향 표기
+      var dirKo = (ar >= dp) ? "도착" : "출발", dirEn = (ar >= dp) ? "arr" : "dep";
+      return fl + " " + d + (LANG === "ko" ? " " + esc(a.minutes) + "분 " + dirKo + " 지연"
+                                           : " " + dirEn + " +" + esc(a.minutes) + "min");
+    }
     return fl + " " + d;
   }).join(", ");
 }
