@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-24T21:49:35+00:00",
- "generated_at_doha": "2026-07-25 00:49",
- "generated_at_seoul": "2026-07-25 06:49",
+ "generated_at_utc": "2026-07-24T21:56:57+00:00",
+ "generated_at_doha": "2026-07-25 00:56",
+ "generated_at_seoul": "2026-07-25 06:56",
  "degraded": false,
  "fetch_health": {
   "ok": 78,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-24T21:49:53+00:00",
+  "checked_at_utc": "2026-07-24T21:57:24+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -270,8 +270,8 @@
      "confirmed": true,
      "board": {
       "doha": {
-       "status": "Scheduled",
-       "statusCode": "SH",
+       "status": "Early",
+       "statusCode": "EA",
        "sched": "05:20",
        "est": "04:55",
        "other": "ICN",
@@ -370,8 +370,8 @@
    "position": null,
    "board": {
     "doha": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Early",
+     "statusCode": "EA",
      "sched": "05:20",
      "est": "04:55",
      "other": "ICN",
@@ -425,12 +425,12 @@
      "date": "2026-07-23",
      "label": "7/23 (목)",
      "label_en": "Thu 7/23",
-     "dep": "19:45",
+     "dep": "19:53",
      "arr": "익일 10:38",
      "kind": "landed",
      "cls": "good",
      "delay": 8,
-     "delay_dep": 0,
+     "delay_dep": 8,
      "delay_arr": 8,
      "confirmed": true
     },
@@ -462,12 +462,12 @@
     "date": "2026-07-23",
     "label": "7/23 (목)",
     "label_en": "Thu 7/23",
-    "dep": "19:45",
+    "dep": "19:53",
     "arr": "익일 10:38",
     "kind": "landed",
     "cls": "good",
     "delay": 8,
-    "delay_dep": 0,
+    "delay_dep": 8,
     "delay_arr": 8,
     "confirmed": true
    }
@@ -551,10 +551,31 @@
   "schedule_review": []
  },
  "boards": {
-  "checked_at_utc": "2026-07-24T21:49:35+00:00",
+  "checked_at_utc": "2026-07-24T21:56:57+00:00",
   "hamad": {
    "ok": true,
    "departures": {
+    "QR858@2026-07-22": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:20",
+     "est": "02:29",
+     "other": "ICN"
+    },
+    "QR858@2026-07-23": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:20",
+     "est": "02:32",
+     "other": "ICN"
+    },
+    "QR862@2026-07-23": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "19:45",
+     "est": "19:53",
+     "other": "ICN"
+    },
     "QR858@2026-07-24": {
      "status": "Departed",
      "statusCode": "DP",
@@ -571,6 +592,20 @@
     }
    },
    "arrivals": {
+    "QR859@2026-07-22": {
+     "status": "All Bags Delivered",
+     "statusCode": "ABD",
+     "sched": "05:20",
+     "est": "04:58",
+     "other": "ICN"
+    },
+    "QR859@2026-07-23": {
+     "status": "All Bags Delivered",
+     "statusCode": "ABD",
+     "sched": "05:20",
+     "est": "04:43",
+     "other": "ICN"
+    },
     "QR859@2026-07-24": {
      "status": "All Bags Delivered",
      "statusCode": "ABD",
@@ -586,8 +621,8 @@
      "other": "ICN"
     },
     "QR859@2026-07-25": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Early",
+     "statusCode": "EA",
      "sched": "05:20",
      "est": "04:55",
      "other": "ICN"
@@ -639,7 +674,7 @@
   }
  },
  "integrity": {
-  "checked_at_utc": "2026-07-24T21:51:41+00:00",
+  "checked_at_utc": "2026-07-24T21:59:18+00:00",
   "flags": [],
   "material": false
  }
