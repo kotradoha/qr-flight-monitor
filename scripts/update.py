@@ -265,7 +265,25 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
         d = today_local + timedelta(days=offset)
         if not cfg["daily"] and d.weekday() != cfg.get("dow", 3):   # 비정기편은 지정 운항 요일만
             continue
-        if (d + timedelta(days=overnight)) < today_local:   # 도착일이 이미 지난 편은 제외
+        # 도착일이 이미 지난 편은 제외 — 단 '도착일'은 출발지 날짜뿐 아니라 도착지 시간대로도 판단한다.
+        #   (인천→도하 저녁편 등: 서울이 자정을 넘겨도 도하 도착 당일이면 계속 보여야 함)
+        origin_keep = not ((d + timedelta(days=overnight)) < today_local)
+        arr_keep = True
+        try:
+            _dh, _dm = map(int, str(cfg["sched_dep"]).split(":"))
+            _sa = str(cfg["sched_arr"]).replace("익일", "").strip()
+            _ah, _am = map(int, _sa.split(":"))
+            _dep_dt = datetime(d.year, d.month, d.day, _dh, _dm, tzinfo=tz)
+            _base = _dep_dt.astimezone(arr_tz).date()
+            for _off in (0, 1):
+                _cd = _base + timedelta(days=_off)
+                _cand = datetime(_cd.year, _cd.month, _cd.day, _ah, _am, tzinfo=arr_tz)
+                if timedelta(hours=1) <= (_cand - _dep_dt) <= timedelta(hours=15):
+                    arr_keep = not (_cand.date() < now_utc.astimezone(arr_tz).date())
+                    break
+        except (ValueError, KeyError):
+            arr_keep = True   # 계산 실패 시 유지 판단은 출발지 기준(origin_keep)에 맡김
+        if not (origin_keep or arr_keep):
             continue
         entry = {
             "date": d.isoformat(),
