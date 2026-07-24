@@ -27,7 +27,7 @@ import time
 import urllib.request
 import urllib.error
 import urllib.parse
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, date, timedelta, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
@@ -806,6 +806,104 @@ def compute_integrity(out, prev, today_iso, tom_iso):
     }
 
 
+def _map_board_status(status):
+    """전광판 상태 문구(영어) → 내부 kind. 알 수 없으면 None(덮어쓰지 않음)."""
+    s = (status or "").strip().lower()
+    if not s:
+        return "sched"                       # 빈칸 = 아직 예정(운항 예정)
+    if "cancel" in s:
+        return "cancelled"
+    if "divert" in s or "return to" in s:
+        return "diverted"
+    if any(w in s for w in ("arriv", "landed", "bag", "delivered")):
+        return "landed"
+    if any(w in s for w in ("depart", "airborne", "en route", "en-route", "take off", "takeoff")):
+        return "inflight"
+    if any(w in s for w in ("board", "gate", "on time", "schedul", "estimat", "delay",
+                            "final", "check", "open", "close", "confirm", "wait")):
+        return "sched"
+    return None
+
+
+def _hhmm_norm(t):
+    """'HH:MM' 또는 'HHMM' → 'HH:MM'. 형식이 아니면 ''."""
+    m = re.match(r"^(\d{1,2}):?(\d{2})$", str(t or "").strip())
+    return f"{int(m.group(1)):02d}:{m.group(2)}" if m else ""
+
+
+def apply_board_display(flights_out, now_utc):
+    """전광판 우선 표시: 각 한국편의 '오늘 운항 인스턴스' 행에 공식 전광판(하마드/인천) 값이 있으면
+    상태·시각을 그 값으로 덮는다. 없거나 연결 실패면 그대로(FlightStats) 둔다.
+    안전장치: 임시 미운영 편은 건드리지 않고, 상태를 뒤로 되돌리지(다운그레이드) 않으며,
+    결항·회항은 전광판을 확정으로 본다. 알 수 없는 전광판 문구는 무시한다."""
+    doha_today = now_utc.astimezone(TZ_DOHA).date()
+    seoul_today = now_utc.astimezone(TZ_SEOUL).date()
+    RANK = {"plan": -1, "checking": -1, "sched": 0, "delayed": 1, "inflight": 1,
+            "landed": 2, "diverted": 3, "cancelled": 3}
+    CLS = {"sched": "good", "inflight": "good", "landed": "good", "delayed": "warn",
+           "cancelled": "crit", "diverted": "crit"}
+    for fno in KOREA_FLIGHTS:
+        f = flights_out.get(fno)
+        if not isinstance(f, dict):
+            continue
+        board = f.get("board") or {}
+        doha_b, korea_b = board.get("doha"), board.get("korea")
+        if not (doha_b or korea_b):
+            continue
+        cfg = FLIGHTS.get(fno) or {}
+        origin = cfg.get("origin_tz")
+        overnight = 1 if str(cfg.get("sched_arr", "")).strip().startswith("익일") else 0
+        dep_b, arr_b = (doha_b, korea_b) if origin == "doha" else (korea_b, doha_b)
+        for day in f.get("days", []):
+            if day.get("kind") == "suspended":
+                continue
+            try:
+                dd = date.fromisoformat(day["date"])
+            except (ValueError, KeyError):
+                continue
+            arr_d = dd + timedelta(days=overnight)
+            if origin == "doha":
+                dep_today, arr_today = (dd == doha_today), (arr_d == seoul_today)
+            else:
+                dep_today, arr_today = (dd == seoul_today), (arr_d == doha_today)
+            use_dep, use_arr = bool(dep_today and dep_b), bool(arr_today and arr_b)
+            if not (use_dep or use_arr):
+                continue
+            # 시각: 전광판 우선(예상→예정 순). 도착이 익일이면 '익일' 유지.
+            if use_dep:
+                v = _hhmm_norm(dep_b.get("est") or dep_b.get("sched"))
+                if v:
+                    day["dep"] = v
+            if use_arr:
+                v = _hhmm_norm(arr_b.get("est") or arr_b.get("sched"))
+                if v:
+                    day["arr"] = ("익일 " + v) if overnight else v
+            # 상태: 전광판 우선(결항/회항은 확정, 그 외엔 다운그레이드 방지)
+            bkinds = []
+            if use_dep:
+                k = _map_board_status(dep_b.get("status"))
+                if k:
+                    bkinds.append(k)
+            if use_arr:
+                k = _map_board_status(arr_b.get("status"))
+                if k:
+                    bkinds.append(k)
+            if not bkinds:
+                continue
+            if "cancelled" in bkinds:
+                final = "cancelled"
+            elif "diverted" in bkinds:
+                final = "diverted"
+            else:
+                cur = day.get("kind")
+                cand = bkinds + ([cur] if cur in RANK else [])
+                final = max(cand, key=lambda k: RANK.get(k, 0))
+            day["kind"] = final
+            day["cls"] = CLS.get(final, "good")
+            day["confirmed"] = True
+            day["board_ok"] = True     # 프론트 '전광판 확인' 표시용
+
+
 def main():
     prev = None
     if DATA_PATH.exists():
@@ -1049,6 +1147,13 @@ def main():
                     _attach(fno, "korea", icn_dep.get(fno), "ICN")
         except Exception as e:  # noqa: BLE001
             print(f"[warn] ICN board stage: {e}", file=sys.stderr)
+
+    # 전광판 우선 표시: 방금 붙인 전광판 값이 있으면 오늘 인스턴스의 상태·시각을 그 값으로 덮는다
+    #   (없거나 실패면 FlightStats 그대로). 실패해도 표시는 안 깨지도록 try 로 감싼다.
+    try:
+        apply_board_display(flights_out, now_utc)
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] apply_board_display: {e}", file=sys.stderr)
 
     out = {
         "generated_at_utc": now_utc.isoformat(timespec="seconds"),
