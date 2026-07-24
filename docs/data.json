@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-24T20:15:25+00:00",
- "generated_at_doha": "2026-07-24 23:15",
- "generated_at_seoul": "2026-07-25 05:15",
+ "generated_at_utc": "2026-07-24T20:28:54+00:00",
+ "generated_at_doha": "2026-07-24 23:28",
+ "generated_at_seoul": "2026-07-25 05:28",
  "degraded": false,
  "fetch_health": {
   "ok": 81,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-24T20:15:45+00:00",
+  "checked_at_utc": "2026-07-24T20:29:47+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -90,6 +90,13 @@
        "est": "02:49",
        "other": "ICN",
        "source": "HIA"
+      },
+      "korea": {
+       "status": "Arrived",
+       "sched": "1705",
+       "est": "1736",
+       "airport": "DOH",
+       "source": "ICN"
       }
      },
      "board_ok": true
@@ -106,8 +113,8 @@
      "confirmed": true,
      "board": {
       "doha": {
-       "status": "Scheduled",
-       "statusCode": "SH",
+       "status": "Check In Open",
+       "statusCode": "CO",
        "sched": "02:20",
        "est": "02:20",
        "other": "ICN",
@@ -199,6 +206,13 @@
      "est": "02:49",
      "other": "ICN",
      "source": "HIA"
+    },
+    "korea": {
+     "status": "Arrived",
+     "sched": "1705",
+     "est": "1736",
+     "airport": "DOH",
+     "source": "ICN"
     }
    }
   },
@@ -241,6 +255,13 @@
        "est": "04:37",
        "other": "ICN",
        "source": "HIA"
+      },
+      "korea": {
+       "status": "Departure",
+       "sched": "0120",
+       "est": "0110",
+       "airport": "DOH",
+       "source": "ICN"
       }
      },
      "board_ok": true
@@ -411,6 +432,13 @@
        "est": "19:53",
        "other": "ICN",
        "source": "HIA"
+      },
+      "korea": {
+       "status": "Arrived",
+       "sched": "1030",
+       "est": "1038",
+       "airport": "DOH",
+       "source": "ICN"
       }
      },
      "board_ok": true
@@ -447,6 +475,13 @@
      "est": "19:53",
      "other": "ICN",
      "source": "HIA"
+    },
+    "korea": {
+     "status": "Arrived",
+     "sched": "1030",
+     "est": "1038",
+     "airport": "DOH",
+     "source": "ICN"
     }
    }
   },
@@ -490,6 +525,13 @@
        "est": "22:02",
        "other": "ICN",
        "source": "HIA"
+      },
+      "korea": {
+       "status": "Departure",
+       "sched": "1830",
+       "est": "1825",
+       "airport": "DOH",
+       "source": "ICN"
       }
      },
      "board_ok": true
@@ -526,6 +568,13 @@
      "est": "22:02",
      "other": "ICN",
      "source": "HIA"
+    },
+    "korea": {
+     "status": "Departure",
+     "sched": "1830",
+     "est": "1825",
+     "airport": "DOH",
+     "source": "ICN"
     }
    }
   }
@@ -535,7 +584,7 @@
   "schedule_review": []
  },
  "boards": {
-  "checked_at_utc": "2026-07-24T20:15:25+00:00",
+  "checked_at_utc": "2026-07-24T20:28:54+00:00",
   "hamad": {
    "ok": true,
    "departures": {
@@ -561,8 +610,8 @@
      "other": "ICN"
     },
     "QR858@2026-07-25": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Check In Open",
+     "statusCode": "CO",
      "sched": "02:20",
      "est": "02:20",
      "other": "ICN"
@@ -607,6 +656,18 @@
      "sched": "1705",
      "est": "1705",
      "airport": "DOH"
+    },
+    "QR862@2026-07-24": {
+     "status": "Arrived",
+     "sched": "1030",
+     "est": "1038",
+     "airport": "DOH"
+    },
+    "QR858@2026-07-24": {
+     "status": "Arrived",
+     "sched": "1705",
+     "est": "1736",
+     "airport": "DOH"
     }
    },
    "departures": {
@@ -615,12 +676,24 @@
      "sched": "0120",
      "est": "0108",
      "airport": "DOH"
+    },
+    "QR859@2026-07-24": {
+     "status": "Departure",
+     "sched": "0120",
+     "est": "0110",
+     "airport": "DOH"
+    },
+    "QR863@2026-07-24": {
+     "status": "Departure",
+     "sched": "1830",
+     "est": "1825",
+     "airport": "DOH"
     }
    }
   }
  },
  "integrity": {
-  "checked_at_utc": "2026-07-24T20:17:23+00:00",
+  "checked_at_utc": "2026-07-24T20:31:42+00:00",
   "flags": [],
   "material": false
  }
