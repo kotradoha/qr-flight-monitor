@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-24T21:30:32+00:00",
- "generated_at_doha": "2026-07-25 00:30",
- "generated_at_seoul": "2026-07-25 06:30",
+ "generated_at_utc": "2026-07-24T21:33:37+00:00",
+ "generated_at_doha": "2026-07-25 00:33",
+ "generated_at_seoul": "2026-07-25 06:33",
  "degraded": false,
  "fetch_health": {
   "ok": 78,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-24T21:30:58+00:00",
+  "checked_at_utc": "2026-07-24T21:33:55+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -70,6 +70,19 @@
     "kind": "normal"
    },
    "days": [
+    {
+     "date": "2026-07-24",
+     "label": "7/24 (금)",
+     "label_en": "Fri 7/24",
+     "dep": "02:49",
+     "arr": "17:36",
+     "kind": "landed",
+     "cls": "good",
+     "delay": 31,
+     "delay_dep": 29,
+     "delay_arr": 31,
+     "confirmed": true
+    },
     {
      "date": "2026-07-25",
      "label": "7/25 (토)",
@@ -196,6 +209,19 @@
      "airport": "DOH",
      "source": "ICN"
     }
+   },
+   "last_done": {
+    "date": "2026-07-24",
+    "label": "7/24 (금)",
+    "label_en": "Fri 7/24",
+    "dep": "02:49",
+    "arr": "17:36",
+    "kind": "landed",
+    "cls": "good",
+    "delay": 31,
+    "delay_dep": 29,
+    "delay_arr": 31,
+    "confirmed": true
    }
   },
   "QR859": {
@@ -219,6 +245,19 @@
     "kind": "normal"
    },
    "days": [
+    {
+     "date": "2026-07-24",
+     "label": "7/24 (금)",
+     "label_en": "Fri 7/24",
+     "dep": "01:10",
+     "arr": "04:37",
+     "kind": "landed",
+     "cls": "good",
+     "delay": 0,
+     "delay_dep": 0,
+     "delay_arr": 0,
+     "confirmed": true
+    },
     {
      "date": "2026-07-25",
      "label": "7/25 (토)",
@@ -345,6 +384,19 @@
      "airport": "DOH",
      "source": "ICN"
     }
+   },
+   "last_done": {
+    "date": "2026-07-24",
+    "label": "7/24 (금)",
+    "label_en": "Fri 7/24",
+    "dep": "01:10",
+    "arr": "04:37",
+    "kind": "landed",
+    "cls": "good",
+    "delay": 0,
+    "delay_dep": 0,
+    "delay_arr": 0,
+    "confirmed": true
    }
   },
   "QR862": {
@@ -370,6 +422,19 @@
    },
    "days": [
     {
+     "date": "2026-07-23",
+     "label": "7/23 (목)",
+     "label_en": "Thu 7/23",
+     "dep": "19:45",
+     "arr": "익일 10:38",
+     "kind": "landed",
+     "cls": "good",
+     "delay": 8,
+     "delay_dep": 0,
+     "delay_arr": 8,
+     "confirmed": true
+    },
+    {
      "date": "2026-07-30",
      "label": "7/30 (목)",
      "label_en": "Thu 7/30",
@@ -392,7 +457,20 @@
      "confirmed": false
     }
    ],
-   "position": null
+   "position": null,
+   "last_done": {
+    "date": "2026-07-23",
+    "label": "7/23 (목)",
+    "label_en": "Thu 7/23",
+    "dep": "19:45",
+    "arr": "익일 10:38",
+    "kind": "landed",
+    "cls": "good",
+    "delay": 8,
+    "delay_dep": 0,
+    "delay_arr": 8,
+    "confirmed": true
+   }
   },
   "QR863": {
    "route": "서울 (ICN) → 도하 (DOH)",
@@ -417,6 +495,19 @@
    },
    "days": [
     {
+     "date": "2026-07-24",
+     "label": "7/24 (금)",
+     "label_en": "Fri 7/24",
+     "dep": "18:25",
+     "arr": "22:02",
+     "kind": "landed",
+     "cls": "good",
+     "delay": 0,
+     "delay_dep": 0,
+     "delay_arr": 0,
+     "confirmed": true
+    },
+    {
      "date": "2026-07-31",
      "label": "7/31 (금)",
      "label_en": "Fri 7/31",
@@ -439,7 +530,20 @@
      "confirmed": false
     }
    ],
-   "position": null
+   "position": null,
+   "last_done": {
+    "date": "2026-07-24",
+    "label": "7/24 (금)",
+    "label_en": "Fri 7/24",
+    "dep": "18:25",
+    "arr": "22:02",
+    "kind": "landed",
+    "cls": "good",
+    "delay": 0,
+    "delay_dep": 0,
+    "delay_arr": 0,
+    "confirmed": true
+   }
   }
  },
  "maintenance": {
@@ -447,7 +551,7 @@
   "schedule_review": []
  },
  "boards": {
-  "checked_at_utc": "2026-07-24T21:30:32+00:00",
+  "checked_at_utc": "2026-07-24T21:33:37+00:00",
   "hamad": {
    "ok": true,
    "departures": {
@@ -535,7 +639,7 @@
   }
  },
  "integrity": {
-  "checked_at_utc": "2026-07-24T21:32:44+00:00",
+  "checked_at_utc": "2026-07-24T21:35:41+00:00",
   "flags": [],
   "material": false
  }
