@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-24T16:44:26+00:00",
- "generated_at_doha": "2026-07-24 19:44",
- "generated_at_seoul": "2026-07-25 01:44",
+ "generated_at_utc": "2026-07-24T16:46:23+00:00",
+ "generated_at_doha": "2026-07-24 19:46",
+ "generated_at_seoul": "2026-07-25 01:46",
  "degraded": false,
  "fetch_health": {
   "ok": 79,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-24T16:44:33+00:00",
+  "checked_at_utc": "2026-07-24T16:46:49+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -163,6 +163,14 @@
    ],
    "position": null,
    "board": {
+    "doha": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:20",
+     "est": "02:49",
+     "other": "ICN",
+     "source": "HIA"
+    },
     "korea": {
      "status": "",
      "sched": "1705",
@@ -422,10 +430,1754 @@
   "schedule_review": []
  },
  "boards": {
-  "checked_at_utc": "2026-07-24T16:44:26+00:00",
+  "checked_at_utc": "2026-07-24T16:46:23+00:00",
   "hamad": {
    "ok": true,
-   "departures": {},
+   "departures": {
+    "QR1184": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "00:50",
+     "est": "00:52",
+     "other": "JED"
+    },
+    "QR147": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "00:55",
+     "est": "00:55",
+     "other": "MAD"
+    },
+    "QR031": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:00",
+     "est": "01:12",
+     "other": "EDI"
+    },
+    "QR1375": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:00",
+     "est": "01:10",
+     "other": "DUR"
+    },
+    "QR021": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:00",
+     "est": "01:09",
+     "other": "MAN"
+    },
+    "QR1174": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:00",
+     "est": "01:01",
+     "other": "MED"
+    },
+    "QR1002": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:05",
+     "est": "01:14",
+     "other": "DXB"
+    },
+    "QR011": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:10",
+     "est": "01:16",
+     "other": "LHR"
+    },
+    "QR059": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:10",
+     "est": "01:09",
+     "other": "MUC"
+    },
+    "QR123": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:10",
+     "est": "01:12",
+     "other": "MXP"
+    },
+    "QR019": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:20",
+     "est": "01:36",
+     "other": "DUB"
+    },
+    "QR1148": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:20",
+     "est": "01:23",
+     "other": "MCT"
+    },
+    "QR648": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:25",
+     "est": "01:26",
+     "other": "KTM"
+    },
+    "QR640": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:25",
+     "est": "01:30",
+     "other": "DAC"
+    },
+    "QR041": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:25",
+     "est": "01:35",
+     "other": "CDG"
+    },
+    "QR1369": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:25",
+     "est": "01:36",
+     "other": "CPT"
+    },
+    "QR137": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:25",
+     "est": "01:27",
+     "other": "BCN"
+    },
+    "QR161": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:30",
+     "est": "01:30",
+     "other": "CPH"
+    },
+    "QR179": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:30",
+     "est": "01:35",
+     "other": "OSL"
+    },
+    "QR8403": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:35",
+     "est": "01:37",
+     "other": "MEL"
+    },
+    "QR329": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:35",
+     "est": "01:40",
+     "other": "LGW"
+    },
+    "QR664": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:35",
+     "est": "01:37",
+     "other": "CMB"
+    },
+    "QR854": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:35",
+     "est": "01:34",
+     "other": "KUL"
+    },
+    "QR101": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:35",
+     "est": "01:41",
+     "other": "GVA"
+    },
+    "QR1363": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:40",
+     "est": "01:48",
+     "other": "JNB"
+    },
+    "QR514": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:40",
+     "est": "01:45",
+     "other": "COK"
+    },
+    "QR1335": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:40",
+     "est": "01:50",
+     "other": "NBO"
+    },
+    "QR818": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:45",
+     "est": "01:48",
+     "other": "HKG"
+    },
+    "QR093": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:50",
+     "est": "01:55",
+     "other": "ZRH"
+    },
+    "QR731": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:50",
+     "est": "01:54",
+     "other": "DFW"
+    },
+    "QR676": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:50",
+     "est": "02:01",
+     "other": "MLE"
+    },
+    "QR890": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:50",
+     "est": "01:52",
+     "other": "HGH"
+    },
+    "QR779": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:55",
+     "est": "02:06",
+     "other": "GRU"
+    },
+    "QR703": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:55",
+     "est": "02:09",
+     "other": "JFK"
+    },
+    "QR069": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:55",
+     "est": "01:54",
+     "other": "FRA"
+    },
+    "QR289": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:55",
+     "est": "02:01",
+     "other": "PRG"
+    },
+    "QR1060": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:55",
+     "est": "01:56",
+     "other": "SHJ"
+    },
+    "QR834": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:00",
+     "est": "02:32",
+     "other": "BKK"
+    },
+    "QR237": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:00",
+     "est": "02:05",
+     "other": "IST"
+    },
+    "QR1407": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:00",
+     "est": "02:03",
+     "other": "LOS"
+    },
+    "QR1166": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:00",
+     "est": "02:17",
+     "other": "RUH"
+    },
+    "QR932": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:05",
+     "est": "02:25",
+     "other": "MNL"
+    },
+    "QR880": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:05",
+     "est": "02:06",
+     "other": "CKG"
+    },
+    "QR201": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:05",
+     "est": "02:18",
+     "other": "BUD"
+    },
+    "QR892": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:55",
+     "est": "02:10",
+     "other": "PKX"
+    },
+    "QR870": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:10",
+     "est": "02:14",
+     "other": "PVG"
+    },
+    "QR802": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:40",
+     "est": "02:10",
+     "other": "KIX"
+    },
+    "QR874": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:10",
+     "est": "02:18",
+     "other": "CAN"
+    },
+    "QR614": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:10",
+     "est": "02:24",
+     "other": "ISB"
+    },
+    "QR660": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:15",
+     "est": "02:14",
+     "other": "CMB"
+    },
+    "QR107": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:15",
+     "est": "02:16",
+     "other": "LHR"
+    },
+    "QR1040": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:15",
+     "est": "02:17",
+     "other": "AUH"
+    },
+    "QR1424": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:15",
+     "est": "02:17",
+     "other": "ACC"
+    },
+    "QR211": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:20",
+     "est": "02:37",
+     "other": "ATH"
+    },
+    "QR858": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:20",
+     "est": "02:49",
+     "other": "ICN"
+    },
+    "QR1156": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:20",
+     "est": "02:27",
+     "other": "DMM"
+    },
+    "QR115": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:25",
+     "est": "02:32",
+     "other": "FCO"
+    },
+    "QR079": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:25",
+     "est": "02:33",
+     "other": "BER"
+    },
+    "QR1455": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:25",
+     "est": "02:25",
+     "other": "HRE"
+    },
+    "QR570": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:25",
+     "est": "02:31",
+     "other": "DEL"
+    },
+    "QR836": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:30",
+     "est": "02:35",
+     "other": "BKK"
+    },
+    "QR900": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:30",
+     "est": "02:47",
+     "other": "PER"
+    },
+    "QR956": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:35",
+     "est": "02:35",
+     "other": "CGK"
+    },
+    "QR852": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:35",
+     "est": "02:46",
+     "other": "KUL"
+    },
+    "QR948": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:35",
+     "est": "02:41",
+     "other": "SIN"
+    },
+    "QR1491": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:35",
+     "est": "02:47",
+     "other": "NBJ"
+    },
+    "QR610": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:40",
+     "est": "02:57",
+     "other": "KHI"
+    },
+    "QR976": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:45",
+     "est": "02:45",
+     "other": "HAN"
+    },
+    "QR962": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:45",
+     "est": "02:43",
+     "other": "DPS"
+    },
+    "QR119": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:45",
+     "est": "02:55",
+     "other": "LHR"
+    },
+    "QR1499": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:10",
+     "est": "02:59",
+     "other": "DAR"
+    },
+    "QR806": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "02:50",
+     "est": "03:01",
+     "other": "NRT"
+    },
+    "QR4947": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "01:30",
+     "est": "03:25",
+     "other": "MNL"
+    },
+    "QR628": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "04:15",
+     "est": "04:16",
+     "other": "LHE"
+    },
+    "QR436": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "00:30",
+     "est": "05:00",
+     "other": "ISU"
+    },
+    "QR650": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "06:50",
+     "est": "06:46",
+     "other": "KTM"
+    },
+    "QR311": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:00",
+     "est": "06:59",
+     "other": "JMK"
+    },
+    "QR341": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:10",
+     "est": "07:10",
+     "other": "LIS"
+    },
+    "QR1202": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:15",
+     "est": "07:01",
+     "other": "ULH"
+    },
+    "QR231": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:25",
+     "est": "07:21",
+     "other": "BEG"
+    },
+    "QR203": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:25",
+     "est": "07:28",
+     "other": "ATH"
+    },
+    "QR1307": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:35",
+     "est": "07:37",
+     "other": "CAI"
+    },
+    "QR239": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:35",
+     "est": "07:35",
+     "other": "IST"
+    },
+    "QR149": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:35",
+     "est": "08:11",
+     "other": "MAD"
+    },
+    "QR317": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:40",
+     "est": "07:43",
+     "other": "BJV"
+    },
+    "QR1190": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:40",
+     "est": "07:42",
+     "other": "JED"
+    },
+    "QR1038": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:40",
+     "est": "07:41",
+     "other": "SHJ"
+    },
+    "QR1178": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:40",
+     "est": "07:46",
+     "other": "MED"
+    },
+    "QR719": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:45",
+     "est": "07:50",
+     "other": "SEA"
+    },
+    "QR339": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:45",
+     "est": "07:47",
+     "other": "SVO"
+    },
+    "QR085": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "08:06",
+     "other": "DUS"
+    },
+    "QR1405": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "08:12",
+     "other": "LOS"
+    },
+    "QR027": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "07:56",
+     "other": "MAN"
+    },
+    "QR960": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "07:54",
+     "other": "DPS"
+    },
+    "QR1144": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "07:54",
+     "other": "SLL"
+    },
+    "QR155": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "07:54",
+     "other": "AGP"
+    },
+    "QR448": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "08:18",
+     "other": "BSR"
+    },
+    "QR1170": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:50",
+     "est": "08:03",
+     "other": "RUH"
+    },
+    "QR353": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:55",
+     "est": "08:00",
+     "other": "GYD"
+    },
+    "QR1006": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:55",
+     "est": "08:00",
+     "other": "DXB"
+    },
+    "QR846": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:55",
+     "est": "08:15",
+     "other": "HKT"
+    },
+    "QR928": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "07:55",
+     "est": "07:58",
+     "other": "MNL"
+    },
+    "QR755": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:00",
+     "est": "08:04",
+     "other": "ATL"
+    },
+    "QR729": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:00",
+     "est": "08:03",
+     "other": "DFW"
+    },
+    "QR017": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:00",
+     "est": "08:06",
+     "other": "DUB"
+    },
+    "QR444": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:00",
+     "est": "08:00",
+     "other": "BGW"
+    },
+    "QR003": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:00",
+     "est": "08:08",
+     "other": "LHR"
+    },
+    "QR944": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:05",
+     "est": "08:49",
+     "other": "SIN"
+    },
+    "QR725": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:10",
+     "est": "08:35",
+     "other": "ORD"
+    },
+    "QR273": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:10",
+     "est": "08:14",
+     "other": "AMS"
+    },
+    "QR701": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:15",
+     "est": "08:18",
+     "other": "JFK"
+    },
+    "QR1150": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:15",
+     "est": "08:15",
+     "other": "DMM"
+    },
+    "QR1395": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:15",
+     "est": "08:34",
+     "other": "RAK"
+    },
+    "QR127": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:15",
+     "est": "08:28",
+     "other": "MXP"
+    },
+    "QR029": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:15",
+     "est": "08:28",
+     "other": "EDI"
+    },
+    "QR193": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:20",
+     "est": "08:22",
+     "other": "BRU"
+    },
+    "QR707": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:20",
+     "est": "08:25",
+     "other": "IAD"
+    },
+    "QR095": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:20",
+     "est": "08:30",
+     "other": "ZRH"
+    },
+    "QR057": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:20",
+     "est": "08:38",
+     "other": "MUC"
+    },
+    "QR767": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:20",
+     "est": "08:25",
+     "other": "YYZ"
+    },
+    "QR1481": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:20",
+     "est": "08:28",
+     "other": "DAR"
+    },
+    "QR777": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:25",
+     "est": "08:34",
+     "other": "MIA"
+    },
+    "QR1240": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:25",
+     "est": "08:27",
+     "other": "RUH"
+    },
+    "QR033": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:25",
+     "est": "08:51",
+     "other": "BHX"
+    },
+    "QR773": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:25",
+     "est": "08:34",
+     "other": "GRU"
+    },
+    "QR313": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:25",
+     "est": "08:27",
+     "other": "ESB"
+    },
+    "QR816": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:30",
+     "est": "08:39",
+     "other": "HKG"
+    },
+    "QR259": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:30",
+     "est": "08:58",
+     "other": "WAW"
+    },
+    "QR743": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:30",
+     "est": "08:44",
+     "other": "BOS"
+    },
+    "QR872": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:30",
+     "est": "08:45",
+     "other": "PVG"
+    },
+    "QR167": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:30",
+     "est": "08:35",
+     "other": "ARN"
+    },
+    "QR826": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:30",
+     "est": "08:41",
+     "other": "BKK"
+    },
+    "QR416": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:35",
+     "est": "08:57",
+     "other": "BEY"
+    },
+    "QR1345": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:35",
+     "est": "08:44",
+     "other": "NBO"
+    },
+    "QR145": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:35",
+     "est": "08:34",
+     "other": "BCN"
+    },
+    "QR1371": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:40",
+     "est": "08:56",
+     "other": "CPT"
+    },
+    "QR301": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:40",
+     "est": "08:44",
+     "other": "HEL"
+    },
+    "QR763": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:40",
+     "est": "08:42",
+     "other": "YUL"
+    },
+    "QR159": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:40",
+     "est": "08:44",
+     "other": "CPH"
+    },
+    "QR954": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:40",
+     "est": "08:38",
+     "other": "CGK"
+    },
+    "QR1044": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:45",
+     "est": "08:44",
+     "other": "AUH"
+    },
+    "QR265": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:45",
+     "est": "08:52",
+     "other": "LCA"
+    },
+    "QR055": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:50",
+     "est": "08:49",
+     "other": "NCE"
+    },
+    "QR007": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:55",
+     "est": "08:55",
+     "other": "LHR"
+    },
+    "QR1303": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:55",
+     "est": "09:10",
+     "other": "CAI"
+    },
+    "QR713": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:00",
+     "est": "09:00",
+     "other": "IAH"
+    },
+    "QR081": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:00",
+     "est": "08:55",
+     "other": "BER"
+    },
+    "QR183": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:05",
+     "est": "09:03",
+     "other": "VIE"
+    },
+    "QR1399": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:05",
+     "est": "09:07",
+     "other": "TUN"
+    },
+    "QR067": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:05",
+     "est": "09:11",
+     "other": "FRA"
+    },
+    "QR410": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:05",
+     "est": "09:13",
+     "other": "DAM"
+    },
+    "QR217": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:10",
+     "est": "09:19",
+     "other": "ZAG"
+    },
+    "QR1431": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:10",
+     "est": "09:14",
+     "other": "PHC"
+    },
+    "QR1379": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:15",
+     "est": "09:15",
+     "other": "ALG"
+    },
+    "QR131": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:15",
+     "est": "09:16",
+     "other": "FCO"
+    },
+    "QR1022": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:20",
+     "est": "09:23",
+     "other": "DXB"
+    },
+    "QR221": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:25",
+     "est": "09:44",
+     "other": "OTP"
+    },
+    "QR8401": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:25",
+     "est": "09:24",
+     "other": "SYD"
+    },
+    "QR654": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:25",
+     "est": "09:28",
+     "other": "CMB"
+    },
+    "QR1315": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:20",
+     "est": "09:45",
+     "other": "HBE"
+    },
+    "QR402": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:50",
+     "est": "10:01",
+     "other": "AMM"
+    },
+    "QR1383": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "10:20",
+     "est": "10:32",
+     "other": "EBB"
+    },
+    "QR039": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "08:35",
+     "est": "10:30",
+     "other": "CDG"
+    },
+    "QR1062": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "10:50",
+     "est": "10:40",
+     "other": "SHJ"
+    },
+    "QR646": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "09:20",
+     "est": "10:55",
+     "other": "KTM"
+    },
+    "QR442": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "12:20",
+     "est": "12:24",
+     "other": "BGW"
+    },
+    "QR1164": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "12:30",
+     "est": "12:31",
+     "other": "RUH"
+    },
+    "QR1248": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "12:40",
+     "est": "13:11",
+     "other": "JED"
+    },
+    "QR001": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "12:40",
+     "est": "12:44",
+     "other": "LHR"
+    },
+    "QR1120": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "13:30",
+     "est": "14:13",
+     "other": "SHJ"
+    },
+    "QR207": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "13:50",
+     "est": "13:51",
+     "other": "ATH"
+    },
+    "QR460": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "14:00",
+     "est": "13:59",
+     "other": "NJF"
+    },
+    "QR151": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "14:05",
+     "est": "14:09",
+     "other": "MAD"
+    },
+    "QR319": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "14:05",
+     "est": "14:18",
+     "other": "TZX"
+    },
+    "QR1050": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "14:10",
+     "est": "14:10",
+     "other": "AUH"
+    },
+    "QR245": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "14:15",
+     "est": "14:16",
+     "other": "IST"
+    },
+    "QR023": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "14:25",
+     "est": "14:26",
+     "other": "MAN"
+    },
+    "QR117": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:00",
+     "est": "14:59",
+     "other": "MXP"
+    },
+    "QR071": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:05",
+     "est": "15:03",
+     "other": "FRA"
+    },
+    "QR141": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:10",
+     "est": "15:06",
+     "other": "BCN"
+    },
+    "QR015": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:10",
+     "est": "15:13",
+     "other": "LHR"
+    },
+    "QR037": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:20",
+     "est": "15:48",
+     "other": "CDG"
+    },
+    "QR1238": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:20",
+     "est": "15:12",
+     "other": "RUH"
+    },
+    "QR1301": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "14:40",
+     "est": "15:30",
+     "other": "CAI"
+    },
+    "QR253": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:30",
+     "est": "15:26",
+     "other": "TBS"
+    },
+    "QR705": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:35",
+     "est": "15:35",
+     "other": "JFK"
+    },
+    "QR1066": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:35",
+     "est": "15:28",
+     "other": "SHJ"
+    },
+    "QR083": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:35",
+     "est": "15:28",
+     "other": "BER"
+    },
+    "QR1186": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:50",
+     "est": "15:55",
+     "other": "JED"
+    },
+    "QR426": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:50",
+     "est": "16:02",
+     "other": "BEY"
+    },
+    "QR400": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "16:15",
+     "est": "16:25",
+     "other": "AMM"
+    },
+    "QR283": {
+     "status": "Ask Agent",
+     "statusCode": "RS",
+     "sched": "15:00",
+     "est": "16:30",
+     "other": "AMS"
+    },
+    "QR1192": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "17:45",
+     "est": "17:44",
+     "other": "JED"
+    },
+    "QR1401": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "17:45",
+     "est": "17:46",
+     "other": "TUN"
+    },
+    "QR934": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "17:50",
+     "est": "17:53",
+     "other": "MNL"
+    },
+    "QR283A": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "15:00",
+     "est": "17:59",
+     "other": "AMS"
+    },
+    "QR1034": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:05",
+     "est": "18:05",
+     "other": "SHJ"
+    },
+    "QR389": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:15",
+     "est": "18:17",
+     "other": "ALA"
+    },
+    "QR638": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:25",
+     "est": "18:26",
+     "other": "DAC"
+    },
+    "QR958": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:30",
+     "est": "18:37",
+     "other": "CGK"
+    },
+    "QR1188": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:35",
+     "est": "18:53",
+     "other": "JED"
+    },
+    "QR377": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:35",
+     "est": "18:35",
+     "other": "TAS"
+    },
+    "QR662": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:40",
+     "est": "18:44",
+     "other": "CMB"
+    },
+    "QR1168": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:40",
+     "est": "18:44",
+     "other": "RUH"
+    },
+    "QR1172": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:40",
+     "est": "18:45",
+     "other": "RUH"
+    },
+    "QR1341": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:45",
+     "est": "18:54",
+     "other": "NBO"
+    },
+    "QR1124": {
+     "status": "Gate Closed",
+     "statusCode": "GC",
+     "sched": "18:55",
+     "est": "18:55",
+     "other": "MCT"
+    },
+    "QR540": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "18:55",
+     "est": "18:53",
+     "other": "CCU"
+    },
+    "QR506": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "19:00",
+     "est": "19:01",
+     "other": "TRV"
+    },
+    "QR1014": {
+     "status": "Gate Closed",
+     "statusCode": "GC",
+     "sched": "19:05",
+     "est": "19:05",
+     "other": "DXB"
+    },
+    "QR1018": {
+     "status": "Departed",
+     "statusCode": "OB",
+     "sched": "19:05",
+     "est": "19:07",
+     "other": "DXB"
+    },
+    "QR1052": {
+     "status": "Departed",
+     "statusCode": "DP",
+     "sched": "19:05",
+     "est": "19:09",
+     "other": "AUH"
+    },
+    "QR1130": {
+     "status": "Gate Closed",
+     "statusCode": "GC",
+     "sched": "19:05",
+     "est": "19:05",
+     "other": "SLL"
+    },
+    "QR1305": {
+     "status": "Gate Closed",
+     "statusCode": "GC",
+     "sched": "19:20",
+     "est": "19:20",
+     "other": "CAI"
+    },
+    "QR844": {
+     "status": "Boarding",
+     "statusCode": "BD",
+     "sched": "19:20",
+     "est": "19:20",
+     "other": "KUL"
+    },
+    "QR838": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:25",
+     "est": "19:25",
+     "other": "BKK"
+    },
+    "QR914": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:30",
+     "est": "19:30",
+     "other": "AKL"
+    },
+    "QR578": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:35",
+     "est": "19:35",
+     "other": "DEL"
+    },
+    "QR572": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:35",
+     "est": "19:35",
+     "other": "BLR"
+    },
+    "QR500": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:35",
+     "est": "19:35",
+     "other": "HYD"
+    },
+    "QR658": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:40",
+     "est": "19:40",
+     "other": "CMB"
+    },
+    "QR536": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:40",
+     "est": "19:40",
+     "other": "CCJ"
+    },
+    "QR516": {
+     "status": "Boarding",
+     "statusCode": "BD",
+     "sched": "19:40",
+     "est": "19:40",
+     "other": "COK"
+    },
+    "QR548": {
+     "status": "Last Call",
+     "statusCode": "LC",
+     "sched": "19:50",
+     "est": "19:50",
+     "other": "ATQ"
+    },
+    "QR1154": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "19:50",
+     "est": "19:50",
+     "other": "DMM"
+    },
+    "QR528": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "19:50",
+     "est": "19:50",
+     "other": "MAA"
+    },
+    "QR522": {
+     "status": "Boarding",
+     "statusCode": "BD",
+     "sched": "19:50",
+     "est": "19:50",
+     "other": "GOX"
+    },
+    "QR620": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:00",
+     "est": "20:00",
+     "other": "LHE"
+    },
+    "QR534": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:00",
+     "est": "20:00",
+     "other": "AMD"
+    },
+    "QR285": {
+     "status": "Boarding",
+     "statusCode": "BD",
+     "sched": "20:05",
+     "est": "20:05",
+     "other": "EVN"
+    },
+    "QR908": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:05",
+     "est": "20:05",
+     "other": "SYD"
+    },
+    "QR1054": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:05",
+     "est": "20:05",
+     "other": "AUH"
+    },
+    "QR982": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:05",
+     "est": "20:05",
+     "other": "HAN"
+    },
+    "QR632": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:20",
+     "est": "20:20",
+     "other": "ISB"
+    },
+    "QR904": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:20",
+     "est": "20:20",
+     "other": "MEL"
+    },
+    "QR830": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:20",
+     "est": "20:20",
+     "other": "BKK"
+    },
+    "QR898": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:25",
+     "est": "20:25",
+     "other": "BNE"
+    },
+    "QR1365": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "20:30",
+     "est": "20:30",
+     "other": "JNB"
+    },
+    "QR808": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "20:35",
+     "est": "20:35",
+     "other": "NRT"
+    },
+    "QR556": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:35",
+     "est": "20:35",
+     "other": "BOM"
+    },
+    "QR630": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "20:40",
+     "est": "20:40",
+     "other": "SKT"
+    },
+    "QR842": {
+     "status": "Go to Gate",
+     "statusCode": "GO",
+     "sched": "20:45",
+     "est": "20:45",
+     "other": "HKT"
+    },
+    "QR404": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "20:50",
+     "est": "20:50",
+     "other": "AMM"
+    },
+    "QR600": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "21:00",
+     "est": "21:00",
+     "other": "PEW"
+    },
+    "QR1058": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "21:00",
+     "est": "21:00",
+     "other": "SHJ"
+    },
+    "QR1309": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "21:00",
+     "est": "21:00",
+     "other": "CAI"
+    },
+    "QR604": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "21:10",
+     "est": "21:10",
+     "other": "KHI"
+    },
+    "QR418": {
+     "status": "Check In Open",
+     "statusCode": "CO",
+     "sched": "21:10",
+     "est": "21:10",
+     "other": "BEY"
+    },
+    "QR1182": {
+     "status": "Scheduled",
+     "statusCode": "SH",
+     "sched": "23:10",
+     "est": "23:10",
+     "other": "JED"
+    }
+   },
    "arrivals": {
     "QR1131": {
      "status": "All Bags Delivered",
@@ -2210,7 +3962,7 @@
   }
  },
  "integrity": {
-  "checked_at_utc": "2026-07-24T16:46:13+00:00",
+  "checked_at_utc": "2026-07-24T16:48:18+00:00",
   "flags": [],
   "material": false
  }
