@@ -636,6 +636,53 @@ def fetch_icn_board(key, arrivals=True, timeout=12):
     return out
 
 
+HIA_BASE = "https://dohahamadairport.com/webservices/fids"
+
+
+def _hhmm_tz(ts, tz):
+    """유닉스초 → 해당 tz의 'HH:MM'. 실패 시 빈 문자열."""
+    try:
+        return datetime.fromtimestamp(int(ts), tz).strftime("%H:%M")
+    except (TypeError, ValueError, OSError, OverflowError):
+        return ""
+
+
+def fetch_hamad_board(now_utc, arrivals=False, timeout=12):
+    """하마드공항(도하) 공식 전광판 FIDS API에서 QR 편 상태를 가져온다(도하 쪽 전광판, 키 불필요).
+    arrivals=False: 도하 '출발'(QR858·QR862), True: 도하 '도착'(QR859·QR863).
+    반환: {flightNumber: {status, statusCode, sched, est, other}} / 실패·미검증 시 {} (화면 무영향)."""
+    ds = now_utc.astimezone(TZ_DOHA).strftime("%d-%m-%Y")
+    typ = "arrivals" if arrivals else "departures"
+    qs = urllib.parse.urlencode({"type": typ,
+                                 "startTime": f"{ds} 00:00:00", "endTime": f"{ds} 23:59:59"})
+    url = f"{HIA_BASE}?{qs}"
+    try:
+        raw = json.loads(http_get(url, timeout=timeout, retries=1))
+    except (FetchError, ValueError) as e:
+        print(f"[warn] HIA board ({typ}) failed: {e}", file=sys.stderr)
+        return {}
+    out = {}
+    try:
+        for it in (raw.get("flights") or []):
+            if not isinstance(it, dict):
+                continue
+            fid = str(it.get("flightNumber") or "").replace(" ", "").upper()
+            if not fid.startswith("QR"):
+                continue
+            en = (it.get("lang") or {}).get("en") or {}
+            out[fid] = {
+                "status": str(en.get("flightStatus") or "").strip(),
+                "statusCode": str(it.get("statusCode") or "").strip(),
+                "sched": _hhmm_tz(it.get("scheduledTime"), TZ_DOHA),
+                "est": _hhmm_tz(it.get("estimateTime") or it.get("actualTimeOfDep")
+                                or it.get("latestTime"), TZ_DOHA),
+                "other": str((it.get("originCode") if arrivals else it.get("destinationCode")) or "").strip(),
+            }
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] HIA board ({typ}) parse: {e}", file=sys.stderr)
+    return out
+
+
 def fetch_qr_alerts():
     """카타르항공 Travel Updates(travel-alerts.html)에서 '운항 중단·재개' 관련 공지만 자동 감지(보조).
     일반 안내(파워뱅크·비자·수하물·네트워크 확장 등)는 제외한다.
@@ -963,25 +1010,43 @@ def main():
     except Exception as e:  # noqa: BLE001
         print(f"[warn] qr_alerts scan: {e}", file=sys.stderr)
 
-    # ── 한국 쪽 전광판(인천공항 공식 API) 대조 데이터 ─────────────────────────
-    #   QR858·QR862 인천 '도착', QR859·QR863 인천 '출발' 상태를 공식 소스로 확인해 기록한다.
-    #   1단계: 값을 '표시'로 바꾸지 않고 data.json 에 기록만 한다(접속·구조 검증 + 모니터가 읽어 대조).
-    #   키(ICN_API_KEY)가 없거나 실패해도 화면은 전혀 영향받지 않는다.
-    boards = {"checked_at_utc": now_utc.isoformat(timespec="seconds"), "icn": {"ok": False}}
+    # ── 공식 전광판 대조 데이터: 도하(하마드) + 한국(인천) 양쪽, 매 실행마다 기록 ──────────
+    #   도하 쪽 하마드: QR858·QR862 '출발', QR859·QR863 '도착' (키 불필요).
+    #   한국 쪽 인천: QR858·QR862 '도착', QR859·QR863 '출발' (ICN_API_KEY 필요).
+    #   현재 단계: 값을 '표시'로 바꾸지 않고 data.json 에 기록만(모니터가 읽어 대조·알림).
+    #   어느 쪽이든 접속·키 실패 시 조용히 건너뛰며 화면은 전혀 영향받지 않는다.
+    boards = {"checked_at_utc": now_utc.isoformat(timespec="seconds"),
+              "hamad": {"ok": False}, "icn": {"ok": False}}
+
+    def _attach(fno, side, entry, src):
+        if entry and isinstance(flights_out.get(fno), dict):
+            flights_out[fno].setdefault("board", {})[side] = {**entry, "source": src}
+
+    # 도하 쪽 하마드 전광판 (키 불필요)
+    try:
+        ham_dep = fetch_hamad_board(now_utc, arrivals=False)   # QR858·QR862 도하 출발
+        ham_arr = fetch_hamad_board(now_utc, arrivals=True)    # QR859·QR863 도하 도착
+        if ham_dep or ham_arr:
+            boards["hamad"] = {"ok": True, "departures": ham_dep, "arrivals": ham_arr}
+            for fno in ("QR858", "QR862"):
+                _attach(fno, "doha", ham_dep.get(fno), "HIA")
+            for fno in ("QR859", "QR863"):
+                _attach(fno, "doha", ham_arr.get(fno), "HIA")
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] HIA board stage: {e}", file=sys.stderr)
+
+    # 한국 쪽 인천공항 공식 API (키 필요)
     icn_key = (os.environ.get("ICN_API_KEY") or "").strip()
     if icn_key:
         try:
-            icn_arr = fetch_icn_board(icn_key, arrivals=True)    # QR858·QR862 (인천 도착)
-            icn_dep = fetch_icn_board(icn_key, arrivals=False)   # QR859·QR863 (인천 출발)
+            icn_arr = fetch_icn_board(icn_key, arrivals=True)    # QR858·QR862 인천 도착
+            icn_dep = fetch_icn_board(icn_key, arrivals=False)   # QR859·QR863 인천 출발
             if icn_arr or icn_dep:
                 boards["icn"] = {"ok": True, "arrivals": icn_arr, "departures": icn_dep}
-                by_flight = {}
-                by_flight.update(icn_arr)
-                by_flight.update(icn_dep)
-                for fno in KOREA_FLIGHTS:
-                    b = by_flight.get(fno)
-                    if b and isinstance(flights_out.get(fno), dict):
-                        flights_out[fno]["board"] = {**b, "source": "ICN"}
+                for fno in ("QR858", "QR862"):
+                    _attach(fno, "korea", icn_arr.get(fno), "ICN")
+                for fno in ("QR859", "QR863"):
+                    _attach(fno, "korea", icn_dep.get(fno), "ICN")
         except Exception as e:  # noqa: BLE001
             print(f"[warn] ICN board stage: {e}", file=sys.stderr)
 
