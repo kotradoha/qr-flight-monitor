@@ -598,61 +598,99 @@ def fetch_airspace(prev):
         return _airspace_unavailable()
 
 
-ICN_BASE = "http://apis.data.go.kr/B551177/StatusOfPassengerFlightsOdp"
+# 인천공항 공식 '여객편 운항 현황 상세 조회' API(공공데이터포털 B551177).
+# 예전 실시간판(StatusOfPassengerFlightsOdp)은 '오늘(서울)'만 제공해, 이미 착륙해 전광판에서
+# 빠진 편(어제 운항분)을 맞출 수 없었다. 상세판은 searchday(YYYYMMDD)로 과거·미래 날짜를 조회할 수
+# 있어(D-3~D+6), 오늘+어제(서울) 2일을 조회해 '과거 운항 현황'까지 전광판 기준으로 일치시킨다.
+ICN_BASE = "https://apis.data.go.kr/B551177/StatusOfPassengerFlightsDeOdp"
 
 
-def fetch_icn_board(key, now_utc, arrivals=True, timeout=12):
-    """인천공항 공식 '여객편 운항현황(다국어)' API에서 카타르항공(QR) 편 상태를 가져온다(한국 쪽 전광판).
-    arrivals=True: 인천 '도착'(QR858·QR862 확인), False: 인천 '출발'(QR859·QR863 확인).
-    API가 '오늘(서울)'만 제공하므로 각 편에 서울 당일 날짜를 키로 붙인다.
-    반환: {"편명@서울날짜(YYYY-MM-DD)": {status(remark), sched, est, airport}} / 실패·미검증 시 {}.
-    ※ 키가 없거나 접속 실패/한도초과여도 조용히 빈 dict — 대시보드 표시는 절대 깨지지 않는다."""
-    if not key:
-        return {}
-    op_date = now_utc.astimezone(TZ_SEOUL).date().isoformat()
-    op = "getPassengerArrivalsOdp" if arrivals else "getPassengerDeparturesOdp"
+def _icn_hhmm(v):
+    """상세판의 'YYYYMMDDHHMM'(12자리) → 'HHMM'. 이미 HHMM/HH:MM이면 그대로 정규화용으로 넘긴다."""
+    s = re.sub(r"\D", "", str(v or ""))
+    if len(s) >= 12:      # YYYYMMDDHHMM → 뒤 4자리(HHMM)
+        return s[8:12]
+    return s              # 이미 HHMM 형태면 그대로(_hhmm_norm이 최종 처리)
+
+
+def _fetch_icn_day(key, op, searchday, timeout):
+    """상세판 한 날짜(searchday=YYYYMMDD)에서 우리 4편만 뽑아 '편명@서울날짜' 레코드로 반환.
+    airline 필터가 무시돼 전 항공사(약 1100편)가 내려오므로, numOfRows를 크게 잡아 한 페이지로 받고
+    편명으로 걸러낸다(과다 편수로 페이지가 넘칠 때만 경고—현재 편수로는 발생하지 않음)."""
     qs = urllib.parse.urlencode({
-        "serviceKey": key, "airline": "QR", "lang": "E", "type": "json",
-        "from_time": "0000", "to_time": "2400", "numOfRows": "300", "pageNo": "1",
+        "serviceKey": key, "type": "json", "searchday": searchday,
+        "numOfRows": "5000", "pageNo": "1", "lang": "E",
     })
     url = f"{ICN_BASE}/{op}?{qs}"
     try:
         body = http_get(url, timeout=timeout, retries=1)   # 파이프라인 지연 방지: 짧게, 재시도 최소
     except FetchError as e:
-        print(f"[warn] ICN board fetch ({op}) failed: {e}", file=sys.stderr)
+        print(f"[warn] ICN board fetch ({op} {searchday}) failed: {e}", file=sys.stderr)
         return {}
     try:
         raw = json.loads(body)
     except ValueError as e:
-        print(f"[warn] ICN board ({op}) non-JSON: {e}", file=sys.stderr)
+        print(f"[warn] ICN board ({op} {searchday}) non-JSON: {e}", file=sys.stderr)
         return {}
     resp = raw.get("response") or {}
     hdr = resp.get("header") or {}
     if str(hdr.get("resultCode") or "").strip() not in ("", "00", "0"):
-        print(f"[warn] ICN board ({op}) resultCode={hdr.get('resultCode')} msg={hdr.get('resultMsg')}",
-              file=sys.stderr)
+        print(f"[warn] ICN board ({op} {searchday}) resultCode={hdr.get('resultCode')} "
+              f"msg={hdr.get('resultMsg')}", file=sys.stderr)
         return {}
     out = {}
     try:
         body_obj = resp.get("body") or {}
-        items = body_obj.get("items") or {}
-        item = items.get("item") if isinstance(items, dict) else items
+        items = body_obj.get("items") or []
+        item = items.get("item") if isinstance(items, dict) else items   # 배열/단일 모두 대응
         if isinstance(item, dict):
             item = [item]
+        total = body_obj.get("totalCount") or body_obj.get("total_count")
+        try:
+            if total is not None and int(total) > len(item or []):
+                print(f"[warn] ICN board ({op} {searchday}) truncated: total={total} "
+                      f"got={len(item or [])} (한 편이 누락될 수 있어 FlightStats로 대체됨)",
+                      file=sys.stderr)
+        except (TypeError, ValueError):
+            pass
         for it in (item or []):
             if not isinstance(it, dict):
                 continue
             fid = str(it.get("flightId") or "").replace(" ", "").upper()
-            if fid not in KOREA_FLIGHTS:      # 우리 4편만 기록
+            if fid not in KOREA_FLIGHTS:      # 우리 4편만 기록(QR8370 등 타편 제외)
                 continue
+            sched = str(it.get("scheduleDateTime") or "").strip()
+            dg = re.sub(r"\D", "", sched)
+            # 서울 운항일 = scheduleDateTime 앞 8자리(YYYYMMDD). 없으면 searchday로 대체.
+            op_date = (f"{dg[0:4]}-{dg[4:6]}-{dg[6:8]}" if len(dg) >= 8
+                       else f"{searchday[0:4]}-{searchday[4:6]}-{searchday[6:8]}")
             out[f"{fid}@{op_date}"] = {
                 "status": str(it.get("remark") or "").strip(),
-                "sched": str(it.get("scheduleDateTime") or "").strip(),
-                "est": str(it.get("estimatedDateTime") or "").strip(),
+                "sched": _icn_hhmm(sched),
+                "est": _icn_hhmm(it.get("estimatedDateTime")),
                 "airport": str(it.get("airportCode") or it.get("airport") or "").strip(),
             }
     except Exception as e:  # noqa: BLE001
-        print(f"[warn] ICN board ({op}) parse: {e}", file=sys.stderr)
+        print(f"[warn] ICN board ({op} {searchday}) parse: {e}", file=sys.stderr)
+    return out
+
+
+def fetch_icn_board(key, now_utc, arrivals=True, timeout=12):
+    """인천공항 공식 '여객편 운항 현황 상세 조회' API에서 카타르항공(QR) 편 상태를 가져온다(한국 쪽 전광판).
+    arrivals=True: 인천 '도착'(QR858·QR862 확인), False: 인천 '출발'(QR859·QR863 확인).
+    오늘+어제(서울) 2일을 조회해, 비행 중인 편은 물론 이미 착륙해 실시간판에서 빠진 '과거 운항분'까지
+    각 편에 서울 운항일 날짜를 키로 붙여 정확히 매칭한다.
+    반환: {"편명@서울날짜(YYYY-MM-DD)": {status(remark), sched, est, airport}} / 실패·미검증 시 {}.
+    ※ 키가 없거나 접속 실패/한도초과여도 조용히 빈 dict — 대시보드 표시는 절대 깨지지 않는다.
+    ※ 호출량: 방향당 2일 = 2콜, (도착+출발) 총 4콜/실행 → 15분 주기 96실행 = 384콜/일(개발 한도 500/일 이내)."""
+    if not key:
+        return {}
+    op = "getPassengerArrivalsDeOdp" if arrivals else "getPassengerDeparturesDeOdp"
+    seoul_today = now_utc.astimezone(TZ_SEOUL).date()
+    out = {}
+    for off in (0, 1):    # 오늘 + 어제(서울) — 과거 운항분 포함
+        searchday = (seoul_today - timedelta(days=off)).strftime("%Y%m%d")
+        out.update(_fetch_icn_day(key, op, searchday, timeout))
     return out
 
 
