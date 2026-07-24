@@ -831,29 +831,40 @@ def _hhmm_norm(t):
     return f"{int(m.group(1)):02d}:{m.group(2)}" if m else ""
 
 
-def apply_board_display(flights_out, now_utc):
-    """전광판 우선 표시: 각 한국편의 '오늘 운항 인스턴스' 행에 공식 전광판(하마드/인천) 값이 있으면
-    상태·시각을 그 값으로 덮는다. 없거나 연결 실패면 그대로(FlightStats) 둔다.
-    안전장치: 임시 미운영 편은 건드리지 않고, 상태를 뒤로 되돌리지(다운그레이드) 않으며,
-    결항·회항은 전광판을 확정으로 본다. 알 수 없는 전광판 문구는 무시한다."""
+def apply_board_display(flights_out, boards, prev, now_utc):
+    """전광판 우선 표시: 각 한국편의 '오늘 인스턴스' 행에 공식 전광판(하마드/인천) 값이 있으면 상태·시각을 그 값으로 표시한다.
+    · 도착이 지나 전광판 '목록에서 빠진' 다리는 직전 실행의 전광판 값을 그대로 유지한다(기존 그대로, FlightStats로 대체하지 않음).
+      단, 그렇게 유지하는 것은 해당 전광판이 '이번에 정상 응답'했을 때만(=단순히 목록에서 빠진 경우). 전광판 연결 자체가 실패하면 유지하지 않고 FlightStats 기본값을 둔다.
+    안전장치: 임시 미운영 편 제외, 상태 다운그레이드 방지, 결항·회항은 전광판 확정, 알 수 없는 문구 무시."""
     doha_today = now_utc.astimezone(TZ_DOHA).date()
     seoul_today = now_utc.astimezone(TZ_SEOUL).date()
+    prev_flights = (prev or {}).get("flights") or {}
+    ham_ok = bool((boards.get("hamad") or {}).get("ok"))
+    icn_ok = bool((boards.get("icn") or {}).get("ok"))
     RANK = {"plan": -1, "checking": -1, "sched": 0, "delayed": 1, "inflight": 1,
             "landed": 2, "diverted": 3, "cancelled": 3}
     CLS = {"sched": "good", "inflight": "good", "landed": "good", "delayed": "warn",
            "cancelled": "crit", "diverted": "crit"}
+
+    def _bt(b):
+        return _hhmm_norm((b or {}).get("est") or (b or {}).get("sched"))
+
     for fno in KOREA_FLIGHTS:
         f = flights_out.get(fno)
         if not isinstance(f, dict):
             continue
         board = f.get("board") or {}
         doha_b, korea_b = board.get("doha"), board.get("korea")
-        if not (doha_b or korea_b):
-            continue
         cfg = FLIGHTS.get(fno) or {}
         origin = cfg.get("origin_tz")
         overnight = 1 if str(cfg.get("sched_arr", "")).strip().startswith("익일") else 0
-        dep_b, arr_b = (doha_b, korea_b) if origin == "doha" else (korea_b, doha_b)
+        # 출발측/도착측 전광판과 그 전광판의 이번 응답 성공 여부
+        if origin == "doha":
+            dep_b, arr_b, dep_board_ok, arr_board_ok = doha_b, korea_b, ham_ok, icn_ok
+        else:
+            dep_b, arr_b, dep_board_ok, arr_board_ok = korea_b, doha_b, icn_ok, ham_ok
+        prev_days = {pd["date"]: pd for pd in (prev_flights.get(fno) or {}).get("days", [])
+                     if isinstance(pd, dict) and pd.get("date")}
         for day in f.get("days", []):
             if day.get("kind") == "suspended":
                 continue
@@ -866,42 +877,53 @@ def apply_board_display(flights_out, now_utc):
                 dep_today, arr_today = (dd == doha_today), (arr_d == seoul_today)
             else:
                 dep_today, arr_today = (dd == seoul_today), (arr_d == doha_today)
-            use_dep, use_arr = bool(dep_today and dep_b), bool(arr_today and arr_b)
-            if not (use_dep or use_arr):
+            has_dep = bool(dep_today and dep_b)       # 이번 실행 출발측 전광판에 이 편이 있음
+            has_arr = bool(arr_today and arr_b)        # 이번 실행 도착측 전광판에 이 편이 있음
+            pv = prev_days.get(day["date"])
+            pv_board = bool(pv and pv.get("board_ok"))
+            # '기존 유지'는 전광판이 정상 응답했는데 이 편만 목록에서 빠진 경우에만(연결 실패 시엔 FlightStats).
+            carry_dep = bool(pv_board and pv.get("dep") and not has_dep and dep_board_ok)
+            carry_arr = bool(pv_board and pv.get("arr") and not has_arr and arr_board_ok)
+            if not (has_dep or has_arr or carry_dep or carry_arr):
                 continue
-            # 시각: 전광판 우선(예상→예정 순). 도착이 익일이면 '익일' 유지.
-            if use_dep:
-                v = _hhmm_norm(dep_b.get("est") or dep_b.get("sched"))
-                if v:
-                    day["dep"] = v
-            if use_arr:
-                v = _hhmm_norm(arr_b.get("est") or arr_b.get("sched"))
-                if v:
-                    day["arr"] = ("익일 " + v) if overnight else v
-            # 상태: 전광판 우선(결항/회항은 확정, 그 외엔 다운그레이드 방지)
+            touched = False
+            # 시각
+            if has_dep and _bt(dep_b):
+                day["dep"] = _bt(dep_b); touched = True
+            elif carry_dep:
+                day["dep"] = pv["dep"]; touched = True
+            if has_arr and _bt(arr_b):
+                v = _bt(arr_b); day["arr"] = ("익일 " + v) if overnight else v; touched = True
+            elif carry_arr:
+                day["arr"] = pv["arr"]; touched = True
+            # 상태(전광판 우선; 없으면 직전 전광판 상태 유지; 결항·회항 확정; 다운그레이드 방지)
             bkinds = []
-            if use_dep:
+            if has_dep:
                 k = _map_board_status(dep_b.get("status"))
                 if k:
                     bkinds.append(k)
-            if use_arr:
+            if has_arr:
                 k = _map_board_status(arr_b.get("status"))
                 if k:
                     bkinds.append(k)
-            if not bkinds:
-                continue
+            final = None
             if "cancelled" in bkinds:
                 final = "cancelled"
             elif "diverted" in bkinds:
                 final = "diverted"
-            else:
+            elif bkinds:
                 cur = day.get("kind")
-                cand = bkinds + ([cur] if cur in RANK else [])
-                final = max(cand, key=lambda k: RANK.get(k, 0))
-            day["kind"] = final
-            day["cls"] = CLS.get(final, "good")
-            day["confirmed"] = True
-            day["board_ok"] = True     # 프론트 '전광판 확인' 표시용
+                final = max(bkinds + ([cur] if cur in RANK else []), key=lambda k: RANK.get(k, 0))
+            elif (carry_dep or carry_arr) and pv.get("kind") in RANK:
+                cur = day.get("kind")
+                final = max([pv["kind"]] + ([cur] if cur in RANK else []), key=lambda k: RANK.get(k, 0))
+            if final:
+                day["kind"] = final
+                day["cls"] = CLS.get(final, "good")
+                day["confirmed"] = True
+                touched = True
+            if touched:
+                day["board_ok"] = True
 
 
 def main():
@@ -1151,7 +1173,7 @@ def main():
     # 전광판 우선 표시: 방금 붙인 전광판 값이 있으면 오늘 인스턴스의 상태·시각을 그 값으로 덮는다
     #   (없거나 실패면 FlightStats 그대로). 실패해도 표시는 안 깨지도록 try 로 감싼다.
     try:
-        apply_board_display(flights_out, now_utc)
+        apply_board_display(flights_out, boards, prev, now_utc)
     except Exception as e:  # noqa: BLE001
         print(f"[warn] apply_board_display: {e}", file=sys.stderr)
 
