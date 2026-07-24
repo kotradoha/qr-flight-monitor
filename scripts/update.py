@@ -1003,6 +1003,95 @@ def apply_board_display(flights_out):
                 day["delay"] = max(int(day.get("delay_dep") or 0), int(day.get("delay_arr") or 0))
 
 
+_LAST_DONE_KEYS = ("date", "label", "label_en", "dep", "arr", "kind", "cls",
+                   "delay", "delay_dep", "delay_arr", "confirmed")
+
+
+def _slim_done(entry):
+    """표시/이월용으로 도착 완료 편의 필요한 필드만 추린 사본."""
+    return {k: entry.get(k) for k in _LAST_DONE_KEYS if entry.get(k) is not None}
+
+
+def _recent_landed_from_boards(fno, cfg, now_utc, ham_dep, ham_arr, icn_arr, icn_dep):
+    """이미 받아 둔 공항 전광판(어제까지 포함)에서 '가장 최근 과거 도착 완료' 편 1개를 복원한다.
+    도착 쪽 전광판이 '도착(landed)'으로 확인된 편만 인정하고, 없으면 None.
+    (라이브 조회창 밖의 더 오래된 편은 직전 data.json의 last_done 이월로 처리한다.)"""
+    origin = cfg.get("origin_tz")
+    tz = tz_of(origin)
+    today_o = now_utc.astimezone(tz).date()
+    overnight = 1 if str(cfg.get("sched_arr", "")).strip().startswith("익일") else 0
+    for back in range(1, 9):                     # 어제(1)부터 최대 8일 전까지, 최신순
+        dd = today_o - timedelta(days=back)
+        if not cfg["daily"] and dd.weekday() != cfg.get("dow", 3):
+            continue                             # 비정기편은 지정 운항 요일만
+        dep_iso, arr_iso = _op_dates(dd, cfg)
+        if origin == "doha":
+            dep_b = ham_dep.get(f"{fno}@{dep_iso}")
+            arr_b = icn_arr.get(f"{fno}@{arr_iso}") if arr_iso else None
+        else:
+            dep_b = icn_dep.get(f"{fno}@{dep_iso}")
+            arr_b = ham_arr.get(f"{fno}@{arr_iso}") if arr_iso else None
+        if not arr_b or _map_board_status(arr_b.get("status")) != "landed":
+            continue                             # 도착 확인된 편만
+        dep_t = _hhmm_norm((dep_b or {}).get("est") or (dep_b or {}).get("sched")) or cfg["sched_dep"]
+        arr_v = _hhmm_norm(arr_b.get("est") or arr_b.get("sched"))
+        arr_t = (("익일 " + arr_v) if overnight else arr_v) if arr_v else cfg["sched_arr"]
+        dm = _delay_min((dep_b or {}).get("sched"), (dep_b or {}).get("est"))
+        am = _delay_min(arr_b.get("sched"), arr_b.get("est"))
+        entry = {
+            "date": dd.isoformat(),
+            "label": f"{dd.month}/{dd.day} ({DOW_KR[dd.weekday()]})",
+            "label_en": f"{DOW_EN[dd.weekday()]} {dd.month}/{dd.day}",
+            "dep": dep_t, "arr": arr_t,
+            "kind": "landed", "cls": "good", "confirmed": True,
+            "delay_dep": dm or 0, "delay_arr": am or 0,
+            "delay": max(dm or 0, am or 0),
+        }
+        return entry
+    return None
+
+
+def ensure_recent_landed(flights_out, prev, now_utc, ham_dep, ham_arr, icn_arr, icn_dep):
+    """각 편이 '가장 최신 도착 완료(landed)' 편을 최소 1개는 계속 보이도록 유지한다.
+    - 표에 이미 도착 완료 편이 있으면 그 최신값을 last_done으로 저장하고 끝.
+    - 없으면(오늘 편이 아직 예정·비행 중이거나 주간편 비운항일 등) 공항 전광판으로 직전 도착편을
+      복원해 붙이고, 라이브 창을 벗어난 경우엔 직전 data.json의 last_done을 이월한다.
+    - 다음 도착 완료 편이 생기면 자연히 그 값으로 교체된다(그 전까지 직전 편 유지).
+    - 너무 오래된(8일 초과) 편은 붙이지 않는다(장기 운휴 오인 방지)."""
+    WINDOW = 8
+    prev_fl = (prev or {}).get("flights") or {}
+    for fno in KOREA_FLIGHTS:
+        f = flights_out.get(fno)
+        if not isinstance(f, dict):
+            continue
+        cfg = FLIGHTS.get(fno) or {}
+        days = f.get("days") or []
+        vis_landed = [d for d in days if d.get("kind") == "landed" and d.get("date")]
+        if vis_landed:                            # 이미 도착 완료 편 표시 중 → 최신값만 저장
+            f["last_done"] = _slim_done(max(vis_landed, key=lambda d: d["date"]))
+            continue
+        rec = _recent_landed_from_boards(fno, cfg, now_utc, ham_dep, ham_arr, icn_arr, icn_dep)
+        prev_done = (prev_fl.get(fno) or {}).get("last_done")
+        best = None
+        for c in (rec, prev_done):                # 더 최신 날짜 우선
+            if c and c.get("date") and (best is None or c["date"] > best["date"]):
+                best = c
+        if not best:
+            continue
+        f["last_done"] = _slim_done(best)
+        present = {d.get("date") for d in days}
+        if best["date"] in present:               # 이미 표에 있음
+            continue
+        try:
+            dd = date.fromisoformat(best["date"])
+        except (ValueError, TypeError):
+            continue
+        arr_tz = tz_of(cfg["arr_tz"])
+        if (now_utc.astimezone(arr_tz).date() - dd).days > WINDOW:
+            continue                              # 너무 오래됨 → 붙이지 않음
+        f["days"] = sorted([_slim_done(best)] + days, key=lambda d: d.get("date") or "")
+
+
 def main():
     prev = None
     if DATA_PATH.exists():
@@ -1269,6 +1358,13 @@ def main():
         apply_board_display(flights_out)
     except Exception as e:  # noqa: BLE001
         print(f"[warn] apply_board_display: {e}", file=sys.stderr)
+
+    # 각 편의 '가장 최신 도착 완료편' 유지: 다음 도착편이 생기기 전까지 직전 도착편을 계속 보여준다.
+    #   (오늘 편이 아직 예정·비행 중이거나, 주간편 비운항일이라 표가 향후편만 남는 경우 대비)
+    try:
+        ensure_recent_landed(flights_out, prev, now_utc, ham_dep, ham_arr, icn_arr, icn_dep)
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] ensure_recent_landed: {e}", file=sys.stderr)
 
     out = {
         "generated_at_utc": now_utc.isoformat(timespec="seconds"),
