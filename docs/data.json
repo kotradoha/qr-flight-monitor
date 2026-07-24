@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-24T17:00:41+00:00",
- "generated_at_doha": "2026-07-24 20:00",
- "generated_at_seoul": "2026-07-25 02:00",
+ "generated_at_utc": "2026-07-24T17:15:28+00:00",
+ "generated_at_doha": "2026-07-24 20:15",
+ "generated_at_seoul": "2026-07-25 02:15",
  "degraded": false,
  "fetch_health": {
   "ok": 79,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-24T17:01:10+00:00",
+  "checked_at_utc": "2026-07-24T17:16:11+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -415,10 +415,10 @@
    "position": null,
    "board": {
     "doha": {
-     "status": "On Time",
-     "statusCode": "OT",
+     "status": "Early",
+     "statusCode": "EA",
      "sched": "22:30",
-     "est": "22:16",
+     "est": "22:10",
      "other": "ICN",
      "source": "HIA"
     }
@@ -430,7 +430,7 @@
   "schedule_review": []
  },
  "boards": {
-  "checked_at_utc": "2026-07-24T17:00:41+00:00",
+  "checked_at_utc": "2026-07-24T17:15:28+00:00",
   "hamad": {
    "ok": true,
    "departures": {
@@ -1877,10 +1877,10 @@
      "other": "NBO"
     },
     "QR1124": {
-     "status": "Gate Closed",
-     "statusCode": "GC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "18:55",
-     "est": "18:55",
+     "est": "19:36",
      "other": "MCT"
     },
     "QR540": {
@@ -1898,15 +1898,15 @@
      "other": "TRV"
     },
     "QR1014": {
-     "status": "Gate Closed",
-     "statusCode": "GC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:05",
-     "est": "19:05",
+     "est": "19:18",
      "other": "DXB"
     },
     "QR1018": {
      "status": "Departed",
-     "statusCode": "OB",
+     "statusCode": "DP",
      "sched": "19:05",
      "est": "19:07",
      "other": "DXB"
@@ -1919,260 +1919,260 @@
      "other": "AUH"
     },
     "QR1130": {
-     "status": "Gate Closed",
-     "statusCode": "GC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:05",
-     "est": "19:05",
+     "est": "19:08",
      "other": "SLL"
     },
     "QR1305": {
-     "status": "Gate Closed",
-     "statusCode": "GC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:20",
-     "est": "19:20",
+     "est": "19:22",
      "other": "CAI"
     },
     "QR844": {
-     "status": "Boarding",
-     "statusCode": "BD",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "19:20",
-     "est": "19:20",
+     "est": "19:52",
      "other": "KUL"
     },
     "QR838": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:25",
-     "est": "19:25",
+     "est": "19:32",
      "other": "BKK"
     },
     "QR914": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "19:30",
-     "est": "19:30",
+     "est": "19:46",
      "other": "AKL"
     },
     "QR578": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:35",
-     "est": "19:35",
+     "est": "19:40",
      "other": "DEL"
     },
     "QR572": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:35",
-     "est": "19:35",
+     "est": "19:39",
      "other": "BLR"
     },
     "QR500": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:35",
-     "est": "19:35",
+     "est": "19:36",
      "other": "HYD"
     },
     "QR658": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:40",
      "est": "19:40",
      "other": "CMB"
     },
     "QR536": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:40",
-     "est": "19:40",
+     "est": "19:36",
      "other": "CCJ"
     },
     "QR516": {
-     "status": "Boarding",
-     "statusCode": "BD",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "19:40",
-     "est": "19:40",
+     "est": "19:56",
      "other": "COK"
     },
     "QR548": {
-     "status": "Last Call",
-     "statusCode": "LC",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:50",
      "est": "19:50",
      "other": "ATQ"
     },
     "QR1154": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "19:50",
-     "est": "19:50",
+     "est": "19:52",
      "other": "DMM"
     },
     "QR528": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "19:50",
-     "est": "19:50",
+     "est": "19:49",
      "other": "MAA"
     },
     "QR522": {
-     "status": "Boarding",
-     "statusCode": "BD",
+     "status": "Gate Closed",
+     "statusCode": "GC",
      "sched": "19:50",
      "est": "19:50",
      "other": "GOX"
     },
     "QR620": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "20:00",
-     "est": "20:00",
+     "est": "20:13",
      "other": "LHE"
     },
     "QR534": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "20:00",
      "est": "20:00",
      "other": "AMD"
     },
     "QR285": {
-     "status": "Boarding",
-     "statusCode": "BD",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "20:05",
      "est": "20:05",
      "other": "EVN"
     },
     "QR908": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "20:05",
      "est": "20:05",
      "other": "SYD"
     },
     "QR1054": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Departed",
+     "statusCode": "DP",
      "sched": "20:05",
-     "est": "20:05",
+     "est": "19:58",
      "other": "AUH"
     },
     "QR982": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Departed",
+     "statusCode": "OB",
      "sched": "20:05",
-     "est": "20:05",
+     "est": "20:00",
      "other": "HAN"
     },
     "QR632": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Gate Closed",
+     "statusCode": "GC",
      "sched": "20:20",
      "est": "20:20",
      "other": "ISB"
     },
     "QR904": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Gate Closed",
+     "statusCode": "GC",
      "sched": "20:20",
      "est": "20:20",
      "other": "MEL"
     },
     "QR830": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Gate Closed",
+     "statusCode": "GC",
      "sched": "20:20",
      "est": "20:20",
      "other": "BKK"
     },
     "QR898": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Gate Closed",
+     "statusCode": "GC",
      "sched": "20:25",
      "est": "20:25",
      "other": "BNE"
     },
     "QR1365": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Last Call",
+     "statusCode": "LC",
      "sched": "20:30",
      "est": "20:30",
      "other": "JNB"
     },
     "QR808": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Last Call",
+     "statusCode": "LC",
      "sched": "20:35",
      "est": "20:35",
      "other": "NRT"
     },
     "QR556": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Last Call",
+     "statusCode": "LC",
      "sched": "20:35",
      "est": "20:35",
      "other": "BOM"
     },
     "QR630": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Last Call",
+     "statusCode": "LC",
      "sched": "20:40",
      "est": "20:40",
      "other": "SKT"
     },
     "QR842": {
-     "status": "Go to Gate",
-     "statusCode": "GO",
+     "status": "Boarding",
+     "statusCode": "BD",
      "sched": "20:45",
      "est": "20:45",
      "other": "HKT"
     },
     "QR404": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Last Call",
+     "statusCode": "LC",
      "sched": "20:50",
      "est": "20:50",
      "other": "AMM"
     },
     "QR600": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Boarding",
+     "statusCode": "BD",
      "sched": "21:00",
      "est": "21:00",
      "other": "PEW"
     },
     "QR1058": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Go to Gate",
+     "statusCode": "GO",
      "sched": "21:00",
      "est": "21:00",
      "other": "SHJ"
     },
     "QR1309": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Boarding",
+     "statusCode": "BD",
      "sched": "21:00",
      "est": "21:00",
      "other": "CAI"
     },
     "QR604": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Go to Gate",
+     "statusCode": "GO",
      "sched": "21:10",
      "est": "21:10",
      "other": "KHI"
     },
     "QR418": {
-     "status": "Check In Open",
-     "statusCode": "CO",
+     "status": "Go to Gate",
+     "statusCode": "GO",
      "sched": "21:10",
      "est": "21:10",
      "other": "BEY"
     },
     "QR1182": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Check In Open",
+     "statusCode": "CO",
      "sched": "23:10",
      "est": "23:10",
      "other": "JED"
@@ -2201,10 +2201,10 @@
      "other": "OSL"
     },
     "QR1380": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "All Bags Delivered",
+     "statusCode": "ABD",
      "sched": "23:35",
-     "est": "23:35",
+     "est": "00:07",
      "other": "ALG"
     },
     "QR803": {
@@ -2250,8 +2250,8 @@
      "other": "GYD"
     },
     "QR963": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:30",
      "est": "23:28",
      "other": "DPS"
@@ -2306,10 +2306,10 @@
      "other": "BGW"
     },
     "QR1370": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Early",
+     "statusCode": "EA",
      "sched": "23:50",
-     "est": "23:36",
+     "est": "23:23",
      "other": "CPT"
     },
     "QR1189": {
@@ -3076,15 +3076,15 @@
      "other": "BSR"
     },
     "QR238": {
-     "status": "Last Bag",
-     "statusCode": "LB",
+     "status": "All Bags Delivered",
+     "statusCode": "ABD",
      "sched": "15:45",
      "est": "15:49",
      "other": "IST"
     },
     "QR162": {
-     "status": "Last Bag",
-     "statusCode": "LB",
+     "status": "All Bags Delivered",
+     "statusCode": "ABD",
      "sched": "16:05",
      "est": "15:55",
      "other": "CPH"
@@ -3454,8 +3454,8 @@
      "other": "BEG"
     },
     "QR1067": {
-     "status": "Bags On Belt",
-     "statusCode": "BB",
+     "status": "Last Bag",
+     "statusCode": "LB",
      "sched": "19:15",
      "est": "18:47",
      "other": "SHJ"
@@ -3468,24 +3468,24 @@
      "other": "BGW"
     },
     "QR1249": {
-     "status": "Delayed",
-     "statusCode": "ES",
+     "status": "Bags On Belt",
+     "statusCode": "BB",
      "sched": "19:00",
      "est": "19:30",
      "other": "JED"
     },
     "QR1239": {
-     "status": "On Time",
-     "statusCode": "OT",
+     "status": "Arrived",
+     "statusCode": "OB",
      "sched": "19:50",
-     "est": "19:45",
+     "est": "19:49",
      "other": "RUH"
     },
     "QR461": {
-     "status": "Delayed",
-     "statusCode": "ES",
+     "status": "Ask Agent",
+     "statusCode": "TM",
      "sched": "19:45",
-     "est": "20:10",
+     "est": "20:06",
      "other": "NJF"
     },
     "QR706": {
@@ -3537,6 +3537,13 @@
      "est": "21:50",
      "other": "SIN"
     },
+    "QR732": {
+     "status": "Early",
+     "statusCode": "EA",
+     "sched": "22:40",
+     "est": "22:00",
+     "other": "DFW"
+    },
     "QR655": {
      "status": "Early",
      "statusCode": "EA",
@@ -3562,35 +3569,42 @@
      "status": "Early",
      "statusCode": "EA",
      "sched": "22:40",
-     "est": "22:13",
+     "est": "22:10",
      "other": "SYD"
     },
     "QR184": {
      "status": "On Time",
      "statusCode": "OT",
      "sched": "22:25",
-     "est": "22:16",
+     "est": "22:10",
      "other": "VIE"
     },
     "QR863": {
-     "status": "On Time",
-     "statusCode": "OT",
+     "status": "Early",
+     "statusCode": "EA",
      "sched": "22:30",
-     "est": "22:16",
+     "est": "22:10",
      "other": "ICN"
     },
     "QR835": {
      "status": "Early",
      "statusCode": "EA",
      "sched": "22:35",
-     "est": "22:18",
+     "est": "22:10",
      "other": "BKK"
+    },
+    "QR933": {
+     "status": "On Time",
+     "statusCode": "OT",
+     "sched": "22:30",
+     "est": "22:15",
+     "other": "MNL"
     },
     "QR809": {
      "status": "On Time",
      "statusCode": "OT",
      "sched": "22:20",
-     "est": "22:23",
+     "est": "22:20",
      "other": "NRT"
     },
     "QR1491": {
@@ -3604,64 +3618,64 @@
      "status": "On Time",
      "statusCode": "OT",
      "sched": "22:40",
-     "est": "22:32",
+     "est": "22:25",
      "other": "CGK"
     },
-    "QR933": {
+    "QR977": {
      "status": "On Time",
      "statusCode": "OT",
-     "sched": "22:30",
-     "est": "22:35",
-     "other": "MNL"
-    },
-    "QR732": {
-     "status": "On Time",
-     "statusCode": "OT",
-     "sched": "22:40",
-     "est": "22:40",
-     "other": "DFW"
-    },
-    "QR847": {
-     "status": "Early",
-     "statusCode": "EA",
-     "sched": "23:00",
-     "est": "22:43",
-     "other": "HKT"
+     "sched": "22:20",
+     "est": "22:30",
+     "other": "HAN"
     },
     "QR817": {
      "status": "On Time",
      "statusCode": "OT",
      "sched": "22:50",
-     "est": "22:47",
+     "est": "22:35",
      "other": "HKG"
-    },
-    "QR320": {
-     "status": "Scheduled",
-     "statusCode": "SH",
-     "sched": "22:50",
-     "est": "22:50",
-     "other": "TZX"
-    },
-    "QR056": {
-     "status": "On Time",
-     "statusCode": "OT",
-     "sched": "22:50",
-     "est": "22:52",
-     "other": "NCE"
     },
     "QR086": {
      "status": "On Time",
      "statusCode": "OT",
      "sched": "22:40",
-     "est": "22:54",
+     "est": "22:40",
      "other": "DUS"
     },
-    "QR977": {
-     "status": "Delayed",
-     "statusCode": "ES",
-     "sched": "22:20",
+    "QR320": {
+     "status": "On Time",
+     "statusCode": "OT",
+     "sched": "22:50",
+     "est": "22:40",
+     "other": "TZX"
+    },
+    "QR847": {
+     "status": "On Time",
+     "statusCode": "OT",
+     "sched": "23:00",
+     "est": "22:45",
+     "other": "HKT"
+    },
+    "QR132": {
+     "status": "On Time",
+     "statusCode": "OT",
+     "sched": "22:35",
+     "est": "22:50",
+     "other": "FCO"
+    },
+    "QR056": {
+     "status": "On Time",
+     "statusCode": "OT",
+     "sched": "22:50",
+     "est": "22:50",
+     "other": "NCE"
+    },
+    "QR8402": {
+     "status": "Early",
+     "statusCode": "EA",
+     "sched": "23:15",
      "est": "22:55",
-     "other": "HAN"
+     "other": "MEL"
     },
     "QR1053": {
      "status": "Scheduled",
@@ -3670,33 +3684,26 @@
      "est": "22:55",
      "other": "AUH"
     },
+    "QR675": {
+     "status": "Early",
+     "statusCode": "EA",
+     "sched": "23:25",
+     "est": "22:55",
+     "other": "MLE"
+    },
     "QR160": {
      "status": "On Time",
      "statusCode": "OT",
      "sched": "23:00",
-     "est": "22:58",
+     "est": "23:00",
      "other": "CPH"
     },
     "QR1384": {
      "status": "On Time",
      "statusCode": "OT",
      "sched": "22:45",
-     "est": "22:58",
+     "est": "23:00",
      "other": "EBB"
-    },
-    "QR8402": {
-     "status": "On Time",
-     "statusCode": "OT",
-     "sched": "23:15",
-     "est": "23:00",
-     "other": "MEL"
-    },
-    "QR132": {
-     "status": "Delayed",
-     "statusCode": "ES",
-     "sched": "22:35",
-     "est": "23:00",
-     "other": "FCO"
     },
     "QR401": {
      "status": "Scheduled",
@@ -3712,6 +3719,13 @@
      "est": "23:10",
      "other": "ABJ"
     },
+    "QR082": {
+     "status": "Early",
+     "statusCode": "EA",
+     "sched": "23:35",
+     "est": "23:10",
+     "other": "BER"
+    },
     "QR1015": {
      "status": "Scheduled",
      "statusCode": "SH",
@@ -3720,18 +3734,11 @@
      "other": "DXB"
     },
     "QR128": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:20",
-     "est": "23:18",
+     "est": "23:15",
      "other": "MXP"
-    },
-    "QR082": {
-     "status": "Scheduled",
-     "statusCode": "SH",
-     "sched": "23:35",
-     "est": "23:19",
-     "other": "BER"
     },
     "QR427": {
      "status": "Scheduled",
@@ -3741,43 +3748,29 @@
      "other": "BEY"
     },
     "QR1482": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:35",
      "est": "23:22",
      "other": "DAR"
     },
     "QR1400": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:35",
      "est": "23:25",
      "other": "TUN"
     },
-    "QR675": {
-     "status": "Scheduled",
-     "statusCode": "SH",
-     "sched": "23:25",
-     "est": "23:25",
-     "other": "MLE"
-    },
     "QR1302": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Delayed",
+     "statusCode": "ES",
      "sched": "23:10",
      "est": "23:26",
      "other": "CAI"
     },
-    "QR1336": {
-     "status": "Scheduled",
-     "statusCode": "SH",
-     "sched": "23:10",
-     "est": "23:30",
-     "other": "NBO"
-    },
     "QR1376": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:40",
      "est": "23:32",
      "other": "DUR"
@@ -3797,22 +3790,22 @@
      "other": "DMM"
     },
     "QR1456": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:35",
      "est": "23:36",
      "other": "HRE"
     },
     "QR058": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:25",
      "est": "23:38",
      "other": "MUC"
     },
     "QR1366": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Delayed",
+     "statusCode": "ES",
      "sched": "23:20",
      "est": "23:40",
      "other": "JNB"
@@ -3824,37 +3817,44 @@
      "est": "23:40",
      "other": "DXB"
     },
-    "QR168": {
-     "status": "Scheduled",
-     "statusCode": "SH",
-     "sched": "23:35",
-     "est": "23:42",
-     "other": "ARN"
+    "QR1336": {
+     "status": "Delayed",
+     "statusCode": "ES",
+     "sched": "23:10",
+     "est": "23:43",
+     "other": "NBO"
     },
     "QR1173": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "Delayed",
+     "statusCode": "ES",
      "sched": "23:10",
      "est": "23:46",
      "other": "RUH"
     },
     "QR004": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:50",
      "est": "23:49",
      "other": "LHR"
     },
+    "QR168": {
+     "status": "Delayed",
+     "statusCode": "ES",
+     "sched": "23:35",
+     "est": "23:51",
+     "other": "ARN"
+    },
     "QR855": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:55",
      "est": "23:51",
      "other": "KUL"
     },
     "QR146": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:50",
      "est": "23:54",
      "other": "BCN"
@@ -3867,8 +3867,8 @@
      "other": "AUH"
     },
     "QR096": {
-     "status": "Scheduled",
-     "statusCode": "SH",
+     "status": "On Time",
+     "statusCode": "OT",
      "sched": "23:45",
      "est": "23:57",
      "other": "ZRH"
@@ -3962,7 +3962,7 @@
   }
  },
  "integrity": {
-  "checked_at_utc": "2026-07-24T17:02:44+00:00",
+  "checked_at_utc": "2026-07-24T17:17:41+00:00",
   "flags": [],
   "material": false
  }
