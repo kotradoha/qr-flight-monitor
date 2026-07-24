@@ -897,6 +897,22 @@ def _hhmm_norm(t):
     return f"{int(m.group(1)):02d}:{m.group(2)}" if m else ""
 
 
+def _delay_min(sched, est):
+    """전광판 sched·est(HHMM)로 지연(분)을 계산. 늦으면 양수, 정시·이르면 0.
+    자정을 넘겨 est가 더 작아지는 경우(예: 23:50→00:15)는 +1일로 보정한다.
+    한쪽이라도 형식이 아니면 None(→ 기존 값 유지)."""
+    s = _hhmm_norm(sched)
+    e = _hhmm_norm(est)
+    if not s or not e:
+        return None
+    sh, sm = map(int, s.split(":"))
+    eh, em = map(int, e.split(":"))
+    diff = (eh * 60 + em) - (sh * 60 + sm)
+    if diff < -720:      # 자정 넘김 보정(정시 근처에서만; 큰 음수는 익일 도착)
+        diff += 1440
+    return diff if diff > 0 else 0
+
+
 def _op_dates(d, cfg):
     """day 엔트리(출발일 d) 기준으로 출발공항·도착공항 현지 운항 날짜를 계산.
     반환: (dep_date_iso, arr_date_iso). dep는 출발공항 현지(=출발일 d), arr는 도착공항 현지 날짜.
@@ -952,8 +968,14 @@ def apply_board_display(flights_out):
             touched = False
             if dep_b and _bt(dep_b):
                 day["dep"] = _bt(dep_b); touched = True
+                dm = _delay_min(dep_b.get("sched"), dep_b.get("est"))
+                if dm is not None:                      # 지연 배지도 전광판 시각과 일치시킴
+                    day["delay_dep"] = dm
             if arr_b and _bt(arr_b):
                 v = _bt(arr_b); day["arr"] = ("익일 " + v) if overnight else v; touched = True
+                am = _delay_min(arr_b.get("sched"), arr_b.get("est"))
+                if am is not None:
+                    day["delay_arr"] = am
             bkinds = []
             if dep_b:
                 k = _map_board_status(dep_b.get("status"))
@@ -978,6 +1000,7 @@ def apply_board_display(flights_out):
                 touched = True
             if touched:
                 day["board_ok"] = True
+                day["delay"] = max(int(day.get("delay_dep") or 0), int(day.get("delay_arr") or 0))
 
 
 def main():
