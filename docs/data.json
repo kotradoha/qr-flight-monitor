@@ -1,7 +1,7 @@
 {
- "generated_at_utc": "2026-07-24T15:45:26+00:00",
- "generated_at_doha": "2026-07-24 18:45",
- "generated_at_seoul": "2026-07-25 00:45",
+ "generated_at_utc": "2026-07-24T16:36:01+00:00",
+ "generated_at_doha": "2026-07-24 19:36",
+ "generated_at_seoul": "2026-07-25 01:36",
  "degraded": false,
  "fetch_health": {
   "ok": 79,
@@ -21,7 +21,7 @@
    }
   ],
   "source": "https://safeairspace.net/qatar/",
-  "checked_at_utc": "2026-07-24T15:45:31+00:00",
+  "checked_at_utc": "2026-07-24T16:36:28+00:00",
   "ok": true,
   "level": "caution",
   "cancel_recent": 0,
@@ -161,7 +161,14 @@
      "confirmed": false
     }
    ],
-   "position": null
+   "position": null,
+   "board": {
+    "status": "",
+    "sched": "1705",
+    "est": "1705",
+    "airport": "DOH",
+    "source": "ICN"
+   }
   },
   "QR859": {
    "route": "서울 (ICN) → 도하 (DOH)",
@@ -188,9 +195,9 @@
      "date": "2026-07-25",
      "label": "7/25 (토)",
      "label_en": "Sat 7/25",
-     "dep": "01:20",
+     "dep": "01:08",
      "arr": "05:24",
-     "kind": "sched",
+     "kind": "inflight",
      "cls": "good",
      "delay": 4,
      "confirmed": true
@@ -273,7 +280,14 @@
      "confirmed": false
     }
    ],
-   "position": null
+   "position": null,
+   "board": {
+    "status": "Departure",
+    "sched": "0120",
+    "est": "0108",
+    "airport": "DOH",
+    "source": "ICN"
+   }
   },
   "QR862": {
    "route": "도하 (DOH) → 서울 (ICN)",
@@ -385,8 +399,96 @@
   "extra_flights": [],
   "schedule_review": []
  },
+ "boards": {
+  "checked_at_utc": "2026-07-24T16:36:01+00:00",
+  "icn": {
+   "ok": true,
+   "arrivals": {
+    "QR5397": {
+     "status": "",
+     "sched": "0710",
+     "est": "0709",
+     "airport": "KUL"
+    },
+    "QR3498": {
+     "status": "",
+     "sched": "1240",
+     "est": "1240",
+     "airport": "HKG"
+    },
+    "QR858": {
+     "status": "",
+     "sched": "1705",
+     "est": "1705",
+     "airport": "DOH"
+    },
+    "QR8370": {
+     "status": "",
+     "sched": "1905",
+     "est": "1905",
+     "airport": "HKG"
+    },
+    "QR4496": {
+     "status": "",
+     "sched": "2115",
+     "est": "2115",
+     "airport": "KUL"
+    },
+    "QR5832": {
+     "status": "",
+     "sched": "2225",
+     "est": "2225",
+     "airport": "HKG"
+    }
+   },
+   "departures": {
+    "QR4497": {
+     "status": "Departure",
+     "sched": "0010",
+     "est": "0003",
+     "airport": "KUL"
+    },
+    "QR859": {
+     "status": "Departure",
+     "sched": "0120",
+     "est": "0108",
+     "airport": "DOH"
+    },
+    "QR3488": {
+     "status": "",
+     "sched": "0800",
+     "est": "0800",
+     "airport": "HKG"
+    },
+    "QR5459": {
+     "status": "",
+     "sched": "1100",
+     "est": "1100",
+     "airport": "KUL"
+    },
+    "QR5829": {
+     "status": "",
+     "sched": "1340",
+     "est": "1340",
+     "airport": "HKG"
+    },
+    "QR3499": {
+     "status": "",
+     "sched": "1510",
+     "est": "1510",
+     "airport": "HKG"
+    },
+    "QR5845": {
+     "status": "",
+     "sched": "2005",
+     "est": "2005",
+     "airport": "HKG"
+    }
+   }
+  }
+ },
  "integrity": {
-  "checked_at_utc": "2026-07-24T15:46:51+00:00",
+  "checked_at_utc": "2026-07-24T16:37:51+00:00",
   "flags": [],
   "material": false
  }
