@@ -711,7 +711,9 @@ def fetch_hamad_board(now_utc, arrivals=False, timeout=12):
     조회창을 '어제~내일(도하)'로 넓혀, 비행 중이라 도착이 내일 새벽인 편·이미 지나 빠진 편도 포함한다.
     반환: {"편명@도하날짜(YYYY-MM-DD)": {status, statusCode, sched, est, other}} / 실패·미검증 시 {}."""
     dnow = now_utc.astimezone(TZ_DOHA)
-    start = (dnow - timedelta(days=1)).strftime("%d-%m-%Y")
+    # 조회창을 과거로 더 넓힌다(-3일). 주간편(QR862 목요일 출발)의 '직전 도착편' 출발시각을
+    # 며칠 지나서도 전광판 기준으로 잡기 위함. 미래는 +1일(내일 새벽 도착편 포함).
+    start = (dnow - timedelta(days=3)).strftime("%d-%m-%Y")
     end = (dnow + timedelta(days=1)).strftime("%d-%m-%Y")
     typ = "arrivals" if arrivals else "departures"
     qs = urllib.parse.urlencode({"type": typ,
