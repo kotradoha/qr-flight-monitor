@@ -253,14 +253,17 @@ def build_core_flight(fno, cfg, now_utc, alerts, health):
     sched_obs = {}              # FlightStats '예정(scheduled)' 출발시각 관측(정기 스케줄 변경 감지용)
 
     # 표시 정책:
-    #  - 카타르항공 발행 스케줄 기준으로 '오늘 이후'만 표시(도착 완료편은 제외).
-    #  - 현재 진행 중(비행 중)과 미래 예정편만 남긴다.
-    #  - 오늘 ±3일 안은 FlightStats로 실시간 상태(비행중/지연/결항)를 확인,
+    #  - '도착일이 오늘 이후'인 편만 표시한다(도착 당일까지 유지 → 오늘 도착 완료편도 남는다).
+    #    · 야간편(예: QR862 목 출발 → 금 도착)은 어제 출발했어도 오늘 도착했으면 오늘 하루는 남긴다.
+    #  - 오늘 ±3일 안은 FlightStats로 실시간 상태(비행중/도착완료/지연/결항)를 확인,
     #    ±3일 밖은 발행 스케줄(운항 예정)로 채워 카타르항공 검색 결과와 동일 범위로 맞춘다.
     horizon = 7 if cfg["daily"] else 14   # 매일편 1주, 비정기편은 향후 2주 내 운항 요일
-    for offset in range(0, horizon + 1):
+    overnight = 1 if str(cfg.get("sched_arr", "")).strip().startswith("익일") else 0  # 도착이 익일인 야간편
+    for offset in range(-1, horizon + 1):   # -1: 어제 출발해 오늘 도착한 야간편을 놓치지 않도록
         d = today_local + timedelta(days=offset)
         if not cfg["daily"] and d.weekday() != cfg.get("dow", 3):   # 비정기편은 지정 운항 요일만
+            continue
+        if (d + timedelta(days=overnight)) < today_local:   # 도착일이 이미 지난 편은 제외
             continue
         entry = {
             "date": d.isoformat(),
@@ -375,7 +378,7 @@ def discover_extra_flights(now_utc, alerts, health):
             continue
         try:
             days, direction, badge = [], None, {"state": "good", "kind": "normal"}
-            for offset in range(0, 4):
+            for offset in range(-1, 4):   # -1: 어제 출발해 오늘 도착한 편도 당일까진 유지
                 d = doha_today + timedelta(days=offset)
                 try:
                     fs = fetch_flight(num, d)
@@ -388,6 +391,10 @@ def discover_extra_flights(now_utc, alerts, health):
                     continue
                 dep_tz = TZ_SEOUL if fs["dep_ap"] == "ICN" else TZ_DOHA
                 arr_tz = TZ_SEOUL if fs["arr_ap"] == "ICN" else TZ_DOHA
+                # 도착일이 이미 지난 편은 제외(도착 당일까지만 유지). 도착시각 확인되면 그 날짜로 판정.
+                _arr_dt = to_local_dt(fs["arr_est_utc"], arr_tz) or to_local_dt(fs["arr_sched_utc"], arr_tz)
+                if _arr_dt is not None and _arr_dt.date() < now_utc.astimezone(arr_tz).date():
+                    continue
                 if direction is None:
                     direction = (fs["dep_ap"], fs["arr_ap"])
                 entry = {
